@@ -7,6 +7,7 @@ import { Callout } from '../../components/ui/callout';
 import { Card, CardBody, CardHeader } from '../../components/ui/card';
 import { CountUp } from '../../components/ui/count-up';
 import { Tip } from '../../components/ui/tooltip';
+import { ValueFx } from '../../components/ui/value-fx';
 import { useCalc } from '../../hooks/calc-context';
 import { cn } from '../../lib/cn';
 import { fmt, fmt2 } from '../../lib/format';
@@ -37,26 +38,28 @@ function HourCell({
     );
   };
   return (
-    <input
-      key={text}
-      defaultValue={text}
-      aria-label={label}
-      inputMode="decimal"
-      placeholder="0"
-      onBlur={(e) => commit(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-          e.preventDefault();
-          onChange(Math.min(max, Math.max(0, value + (e.key === 'ArrowUp' ? 1 : -1))));
-        }
-      }}
-      className={cn(
-        'num h-11 w-full min-w-9 rounded-xl border border-line bg-surface text-center text-[15px] font-medium transition-shadow placeholder:text-muted/40 focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none',
-        green && 'text-[var(--k-ind)]',
-        value > 0 && 'border-brand/35 bg-brand-soft/50',
-      )}
-    />
+    <ValueFx value={value} className="rounded-xl">
+      <input
+        key={text}
+        defaultValue={text}
+        aria-label={label}
+        inputMode="decimal"
+        placeholder="0"
+        onBlur={(e) => commit(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+          if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            onChange(Math.min(max, Math.max(0, value + (e.key === 'ArrowUp' ? 1 : -1))));
+          }
+        }}
+        className={cn(
+          'num h-11 w-full min-w-9 rounded-xl border border-line bg-surface text-center text-[15px] font-medium transition-shadow placeholder:text-muted/40 focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none',
+          green && 'text-[var(--k-ind)]',
+          value > 0 && 'border-brand/35 bg-brand-soft/50',
+        )}
+      />
+    </ValueFx>
   );
 }
 

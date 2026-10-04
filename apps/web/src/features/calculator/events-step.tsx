@@ -527,9 +527,10 @@ export default function EventsStep() {
                     <motion.li
                       key={e.id}
                       layout
-                      initial={{ opacity: 0, scale: 0.96 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.94, height: 0 }}
+                      initial={{ opacity: 0, y: 16, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: 80, scale: 0.92, height: 0, marginTop: 0 }}
+                      transition={{ type: 'spring', stiffness: 360, damping: 28 }}
                       className={cn(
                         'group flex gap-3 rounded-2xl border bg-surface-2/50 p-3.5',
                         editing === e.id ? 'border-brand' : 'border-line',

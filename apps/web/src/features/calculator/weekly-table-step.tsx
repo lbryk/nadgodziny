@@ -22,6 +22,7 @@ import { CountUp } from '../../components/ui/count-up';
 import { NumberField } from '../../components/ui/field';
 import { Toggle } from '../../components/ui/switch';
 import { Tip } from '../../components/ui/tooltip';
+import { FlashNumber, ValueFx } from '../../components/ui/value-fx';
 import { useCalc } from '../../hooks/calc-context';
 import { cn } from '../../lib/cn';
 import { fmt, fmt2 } from '../../lib/format';
@@ -47,6 +48,8 @@ interface DayCellProps {
   kind: DayKind | 'void';
   label?: string;
   text: string;
+  /** regular + individual hours of the day — drives the animations */
+  total: number;
   individual: boolean;
   overridden: boolean;
   excluded: boolean;
@@ -62,6 +65,7 @@ const DayCell = memo(function DayCell({
   kind,
   label,
   text,
+  total,
   individual,
   overridden,
   excluded,
@@ -116,7 +120,7 @@ const DayCell = memo(function DayCell({
   return (
     <td className="relative p-0.5">
       <Tip content={tip}>
-        <div className="relative">
+        <ValueFx value={total} className="rounded-md">
           <input
             ref={ref}
             data-coords={coords}
@@ -186,7 +190,7 @@ const DayCell = memo(function DayCell({
               <Undo2 className="size-2.5" />
             </button>
           )}
-        </div>
+        </ValueFx>
       </Tip>
     </td>
   );
@@ -356,6 +360,7 @@ export default function WeeklyTableStep() {
                             return (
                               <DayCell
                                 key={c}
+                                total={0}
                                 date=""
                                 kind="void"
                                 text=""
@@ -374,6 +379,7 @@ export default function WeeklyTableStep() {
                           return (
                             <DayCell
                               key={cell.date}
+                              total={(day?.regular ?? 0) + (day?.individual ?? 0)}
                               date={cell.date}
                               kind={cell.kind}
                               label={cell.label}
@@ -395,7 +401,7 @@ export default function WeeklyTableStep() {
                           );
                         })}
                         <td className="num px-2 text-right font-medium">
-                          {dead ? '' : fmt(rc.hours)}
+                          {dead ? '' : <FlashNumber value={rc.hours}>{fmt(rc.hours)}</FlashNumber>}
                         </td>
                         <td className="num px-2 text-right text-muted">
                           {dead ? '' : fmt2(rc.pensum)}
@@ -408,7 +414,7 @@ export default function WeeklyTableStep() {
                                 rc.overtime > 0 ? 'bg-ok/12 text-ok' : 'text-muted',
                               )}
                             >
-                              {fmt2(rc.overtime)}
+                              <FlashNumber value={rc.overtime}>{fmt2(rc.overtime)}</FlashNumber>
                             </span>
                           )}
                         </td>
