@@ -78,12 +78,25 @@ const schema = z
     note: z.string().max(600),
   })
   .superRefine((v, ctx) => {
-    if (v.to < v.from) ctx.addIssue({ code: 'custom', path: ['to'], message: 'Data końcowa jest przed początkową.' });
+    if (v.to < v.from)
+      ctx.addIssue({
+        code: 'custom',
+        path: ['to'],
+        message: 'Data końcowa jest przed początkową.',
+      });
     if (v.lessons === 'partial' && v.hoursPerDay <= 0) {
-      ctx.addIssue({ code: 'custom', path: ['hoursPerDay'], message: 'Podaj, ile godzin dziennie się nie odbywa.' });
+      ctx.addIssue({
+        code: 'custom',
+        path: ['hoursPerDay'],
+        message: 'Podaj, ile godzin dziennie się nie odbywa.',
+      });
     }
     if (v.lessons === 'groups' && v.groups.length === 0) {
-      ctx.addIssue({ code: 'custom', path: ['groups'], message: 'Wybierz przynajmniej jedną grupę klas.' });
+      ctx.addIssue({
+        code: 'custom',
+        path: ['groups'],
+        message: 'Wybierz przynajmniej jedną grupę klas.',
+      });
     }
   });
 
@@ -159,7 +172,8 @@ export default function EventsStep() {
 
   const pickKind = (kind: EventKind) => {
     const fresh = createEvent('x', kind, values.from || initialDate);
-    const keepTitle = values.title && !KIND_ORDER.some((k) => EVENT_KIND_META[k].label === values.title);
+    const keepTitle =
+      values.title && !KIND_ORDER.some((k) => EVENT_KIND_META[k].label === values.title);
     setValue('kind', kind);
     setValue('title', keepTitle ? values.title : fresh.title, { shouldValidate: true });
     setValue('lessons', fresh.lessons);
@@ -213,7 +227,11 @@ export default function EventsStep() {
         />
         <CardBody>
           <form onSubmit={submit} className="space-y-5" noValidate>
-            <div role="radiogroup" aria-label="Rodzaj wydarzenia" className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            <div
+              role="radiogroup"
+              aria-label="Rodzaj wydarzenia"
+              className="grid grid-cols-3 gap-2 sm:grid-cols-5"
+            >
               {KIND_ORDER.map((k) => {
                 const Icon = KIND_ICON[k];
                 const active = values.kind === k;
@@ -248,12 +266,26 @@ export default function EventsStep() {
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Od" error={errors.from?.message}>
                 {(id) => (
-                  <input id={id} type="date" min={minDate} max={maxDate} className={inputClass} {...register('from')} />
+                  <input
+                    id={id}
+                    type="date"
+                    min={minDate}
+                    max={maxDate}
+                    className={inputClass}
+                    {...register('from')}
+                  />
                 )}
               </Field>
               <Field label="Do" error={errors.to?.message}>
                 {(id) => (
-                  <input id={id} type="date" min={values.from || minDate} max={maxDate} className={inputClass} {...register('to')} />
+                  <input
+                    id={id}
+                    type="date"
+                    min={values.from || minDate}
+                    max={maxDate}
+                    className={inputClass}
+                    {...register('to')}
+                  />
                 )}
               </Field>
             </div>
@@ -279,14 +311,31 @@ export default function EventsStep() {
               />
               <AnimatePresence initial={false}>
                 {showHours && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                    <Field label="Godzin dziennie, które się nie odbywają" error={errors.hoursPerDay?.message} className="max-w-xs pt-1">
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <Field
+                      label="Godzin dziennie, które się nie odbywają"
+                      error={errors.hoursPerDay?.message}
+                      className="max-w-xs pt-1"
+                    >
                       {(id) => (
                         <Controller
                           control={control}
                           name="hoursPerDay"
                           render={({ field }) => (
-                            <NumberField id={id} value={field.value} onChange={field.onChange} min={0} max={12} step={0.5} suffix="godz." />
+                            <NumberField
+                              id={id}
+                              value={field.value}
+                              onChange={field.onChange}
+                              min={0}
+                              max={12}
+                              step={0.5}
+                              suffix="godz."
+                            />
                           )}
                         />
                       )}
@@ -294,7 +343,12 @@ export default function EventsStep() {
                   </motion.div>
                 )}
                 {showGroups && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
                     <Controller
                       control={control}
                       name="groups"
@@ -307,7 +361,9 @@ export default function EventsStep() {
                                 key={g}
                                 className={cn(
                                   'flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-1.5 text-sm',
-                                  on ? 'border-brand bg-brand-soft text-brand' : 'border-line text-muted',
+                                  on
+                                    ? 'border-brand bg-brand-soft text-brand'
+                                    : 'border-line text-muted',
                                 )}
                               >
                                 <input
@@ -315,7 +371,9 @@ export default function EventsStep() {
                                   className="accent-[var(--brand)]"
                                   checked={on}
                                   onChange={() =>
-                                    field.onChange(on ? field.value.filter((x) => x !== g) : [...field.value, g])
+                                    field.onChange(
+                                      on ? field.value.filter((x) => x !== g) : [...field.value, g],
+                                    )
                                   }
                                 />
                                 {GROUP_LABEL[g]}
@@ -325,7 +383,9 @@ export default function EventsStep() {
                         </div>
                       )}
                     />
-                    {errors.groups?.message && <p className="pt-1 text-xs text-danger">{errors.groups.message}</p>}
+                    {errors.groups?.message && (
+                      <p className="pt-1 text-xs text-danger">{errors.groups.message}</p>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -351,7 +411,11 @@ export default function EventsStep() {
               />
               {values.settlement !== 'none' && (
                 <Field
-                  label={values.settlement === 'separate' ? 'Godziny do wypłaty' : 'Godziny wykonane w ramach 40 h tygodnia'}
+                  label={
+                    values.settlement === 'separate'
+                      ? 'Godziny do wypłaty'
+                      : 'Godziny wykonane w ramach 40 h tygodnia'
+                  }
                   hint={
                     values.settlement === 'free'
                       ? 'Zastępstwo w czasie okienka nie jest płatne, jeśli zastępowany nauczyciel jest na wycieczce.'
@@ -365,7 +429,15 @@ export default function EventsStep() {
                       control={control}
                       name="paidHours"
                       render={({ field }) => (
-                        <NumberField id={id} value={field.value} onChange={field.onChange} min={0} max={400} step={0.5} suffix="godz." />
+                        <NumberField
+                          id={id}
+                          value={field.value}
+                          onChange={field.onChange}
+                          min={0}
+                          max={400}
+                          step={0.5}
+                          suffix="godz."
+                        />
                       )}
                     />
                   )}
@@ -374,7 +446,15 @@ export default function EventsStep() {
             </div>
 
             <Field label="Notatka (opcjonalnie)">
-              {(id) => <textarea id={id} rows={2} maxLength={600} className={cn(inputClass, 'h-auto py-2')} {...register('note')} />}
+              {(id) => (
+                <textarea
+                  id={id}
+                  rows={2}
+                  maxLength={600}
+                  className={cn(inputClass, 'h-auto py-2')}
+                  {...register('note')}
+                />
+              )}
             </Field>
 
             <AnimatePresence initial={false}>
@@ -388,13 +468,17 @@ export default function EventsStep() {
                   <p className="font-medium">Wpływ na wynik</p>
                   <ul className="mt-1.5 grid gap-x-6 gap-y-1 text-[13px] text-muted sm:grid-cols-2">
                     <li>
-                      Wariant 1: <Delta value={preview.v1} /> {preview.absence > 0 && <span>({fmt(preview.absence)} dnia nieobecności)</span>}
+                      Wariant 1: <Delta value={preview.v1} />{' '}
+                      {preview.absence > 0 && (
+                        <span>({fmt(preview.absence)} dnia nieobecności)</span>
+                      )}
                     </li>
                     <li>
                       Wariant 2: <Delta value={preview.v2} />
                     </li>
                     <li className="sm:col-span-2">
-                      Zajęcia, które odpadają: <strong className="text-ink">{fmt(preview.lost)} godz.</strong>
+                      Zajęcia, które odpadają:{' '}
+                      <strong className="text-ink">{fmt(preview.lost)} godz.</strong>
                     </li>
                   </ul>
                 </motion.div>
@@ -410,7 +494,12 @@ export default function EventsStep() {
         </CardBody>
       </Card>
 
-      <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="self-start">
+      <Card
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="self-start"
+      >
         <CardHeader
           title={`Twoje wydarzenia${sorted.length ? ` (${sorted.length})` : ''}`}
           description="Wpływają na wynik w obu wariantach i trafiają na wydruk."
@@ -421,14 +510,19 @@ export default function EventsStep() {
               <div className="grid size-12 place-items-center rounded-2xl bg-surface-2 text-muted">
                 <CalendarPlus className="size-6" />
               </div>
-              <p className="max-w-60 text-sm text-muted">Nie dodano jeszcze żadnych wydarzeń. Zacznij od wycieczki albo praktyk.</p>
+              <p className="max-w-60 text-sm text-muted">
+                Nie dodano jeszcze żadnych wydarzeń. Zacznij od wycieczki albo praktyk.
+              </p>
             </div>
           ) : (
             <ul className="space-y-2.5">
               <AnimatePresence initial={false}>
                 {sorted.map((e) => {
                   const Icon = KIND_ICON[e.kind];
-                  const range = e.from === e.to ? formatDMY(e.from) : `${formatDMY(e.from)} – ${formatDMY(e.to)}`;
+                  const range =
+                    e.from === e.to
+                      ? formatDMY(e.from)
+                      : `${formatDMY(e.from)} – ${formatDMY(e.to)}`;
                   return (
                     <motion.li
                       key={e.id}
@@ -449,15 +543,35 @@ export default function EventsStep() {
                         <p className="num text-xs text-muted">{range}</p>
                         <div className="mt-1.5 flex flex-wrap gap-1.5">
                           {e.lessons === 'whole-day' && <Badge tone="warn">cały dzień</Badge>}
-                          {e.lessons === 'partial' && <Badge tone="warn">−{fmt(e.hoursPerDay)} godz./dzień</Badge>}
-                          {e.lessons === 'groups' && <Badge tone="warn">{e.groups.map((g) => GROUP_LABEL[g]).join(', ')}</Badge>}
-                          {e.settlement === 'separate' && <Badge tone="ok">odrębnie{e.paidHours > 0 ? ` · ${fmt(e.paidHours)} godz.` : ''}</Badge>}
-                          {e.settlement === 'free' && <Badge>w okienku{e.paidHours > 0 ? ` · ${fmt(e.paidHours)} godz.` : ''}</Badge>}
+                          {e.lessons === 'partial' && (
+                            <Badge tone="warn">−{fmt(e.hoursPerDay)} godz./dzień</Badge>
+                          )}
+                          {e.lessons === 'groups' && (
+                            <Badge tone="warn">
+                              {e.groups.map((g) => GROUP_LABEL[g]).join(', ')}
+                            </Badge>
+                          )}
+                          {e.settlement === 'separate' && (
+                            <Badge tone="ok">
+                              odrębnie{e.paidHours > 0 ? ` · ${fmt(e.paidHours)} godz.` : ''}
+                            </Badge>
+                          )}
+                          {e.settlement === 'free' && (
+                            <Badge>
+                              w okienku{e.paidHours > 0 ? ` · ${fmt(e.paidHours)} godz.` : ''}
+                            </Badge>
+                          )}
                         </div>
                         {e.note && <p className="mt-1.5 text-xs text-muted">{e.note}</p>}
                       </div>
                       <div className="flex shrink-0 flex-col gap-1">
-                        <Button size="icon" variant="ghost" className="size-8" aria-label="Edytuj" onClick={() => startEdit(e)}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="size-8"
+                          aria-label="Edytuj"
+                          onClick={() => startEdit(e)}
+                        >
                           <Pencil className="size-3.5" />
                         </Button>
                         <Button

@@ -1,4 +1,9 @@
-import { DEFAULT_CUSTOM_DAYS, DEFAULT_SETTINGS, customDaysSchema, settingsSchema } from '@nadgodziny/core';
+import {
+  DEFAULT_CUSTOM_DAYS,
+  DEFAULT_SETTINGS,
+  customDaysSchema,
+  settingsSchema,
+} from '@nadgodziny/core';
 import { useQuery } from '@tanstack/react-query';
 import { api, type PublicConfig } from '../lib/api';
 import { safeStorage } from '../lib/safe-storage';
@@ -52,7 +57,12 @@ export function useConfig() {
     settings: data.settings,
     customDays: data.customDays,
     /** `server` = fresh from the API, `cached` = last known copy, `defaults` = bundled data only */
-    source: query.isSuccess && !query.isError ? ('server' as const) : readCache() ? ('cached' as const) : ('defaults' as const),
+    source:
+      query.isSuccess && !query.isError
+        ? ('server' as const)
+        : readCache()
+          ? ('cached' as const)
+          : ('defaults' as const),
     isLoading: query.isFetching && !query.isFetched,
   };
 }

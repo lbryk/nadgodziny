@@ -11,11 +11,17 @@ function icsDate(raw: string): ISODate | null {
 }
 
 function unfold(text: string): string[] {
-  return text.replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '').split(/\r?\n/);
+  return text
+    .replace(/\r\n[ \t]/g, '')
+    .replace(/\n[ \t]/g, '')
+    .split(/\r?\n/);
 }
 
 function unescapeText(value: string): string {
-  return value.replace(/\\n/gi, ' ').replace(/\\([,;\\])/g, '$1').trim();
+  return value
+    .replace(/\\n/gi, ' ')
+    .replace(/\\([,;\\])/g, '$1')
+    .trim();
 }
 
 /** Minimal iCalendar reader for all-day VEVENTs (school calendars exported from Google/Outlook). */

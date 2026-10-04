@@ -4,12 +4,11 @@ import { cn } from '../../lib/cn';
 export const inputClass =
   'h-10 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink placeholder:text-muted/70 transition-shadow focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none disabled:opacity-50';
 
-export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function Input(
-  { className, ...props },
-  ref,
-) {
-  return <input ref={ref} className={cn(inputClass, className)} {...props} />;
-});
+export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
+  function Input({ className, ...props }, ref) {
+    return <input ref={ref} className={cn(inputClass, className)} {...props} />;
+  },
+);
 
 export function Field({
   label,
@@ -60,7 +59,10 @@ export function NumberField({
   step?: number;
   suffix?: string;
   className?: string;
-} & Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'min' | 'max' | 'step' | 'type'>) {
+} & Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'value' | 'onChange' | 'min' | 'max' | 'step' | 'type'
+>) {
   const display = value === 0 && props.placeholder ? '' : String(value).replace('.', ',');
   const commit = (raw: string) => {
     const parsed = Number(raw.replace(',', '.').trim());

@@ -26,7 +26,9 @@ function HourCell({
   const text = value === 0 ? '' : String(value).replace('.', ',');
   const commit = (raw: string) => {
     const n = Number(raw.replace(',', '.'));
-    onChange(raw.trim() === '' || Number.isNaN(n) ? 0 : Math.min(12, Math.max(0, Math.round(n * 2) / 2)));
+    onChange(
+      raw.trim() === '' || Number.isNaN(n) ? 0 : Math.min(12, Math.max(0, Math.round(n * 2) / 2)),
+    );
   };
   return (
     <input
@@ -129,8 +131,18 @@ export function TimetableStep() {
           </div>
 
           <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-            <Tile label="Przydział razem" value={totals.k12 + totals.k34 + totals.k5} unit="godz." />
-            <Tile label="Godziny ważone" value={result.v1.weightedHours} unit="" decimals={2} accent />
+            <Tile
+              label="Przydział razem"
+              value={totals.k12 + totals.k34 + totals.k5}
+              unit="godz."
+            />
+            <Tile
+              label="Godziny ważone"
+              value={result.v1.weightedHours}
+              unit=""
+              decimals={2}
+              accent
+            />
             <Tile label="Wymiar etatu" value={result.pensum} unit="godz." />
             <Tile
               label="Nadgodziny / tydzień"
@@ -144,7 +156,11 @@ export function TimetableStep() {
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+        <Card
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+        >
           <CardHeader
             title="Jak liczymy — wariant 1"
             description="To samo, co w przykładzie dyrektora, ale na Twoich liczbach."
@@ -152,25 +168,26 @@ export function TimetableStep() {
           <CardBody>
             <V1Steps v1={result.v1} settings={settings} />
             <p className="mt-3 text-xs text-muted">
-              Wagi: kl. 1–2 = {fmt(settings.weights.k12)}, kl. 3–4 = {fmt(settings.weights.k34)}, kl. 5 ={' '}
-              {fmt(settings.weights.k5)}; {fmt2(settings.weeksPerMonth)} tygodnia w miesiącu. Wagi ustala administrator.
+              Wagi: kl. 1–2 = {fmt(settings.weights.k12)}, kl. 3–4 = {fmt(settings.weights.k34)},
+              kl. 5 = {fmt(settings.weights.k5)}; {fmt2(settings.weeksPerMonth)} tygodnia w
+              miesiącu. Wagi ustala administrator.
             </p>
           </CardBody>
         </Card>
 
         <div className="space-y-4">
           <Callout tone="info" title="Zajęcia zawodowe w klasach 5">
-            Do Bożego Narodzenia realizowane są w podwojonej liczbie, ale płacone w „pojedynczej” — wynagrodzenie
-            jest wypłacane również od 1 stycznia 2027. W wariancie 1 wpisz liczbę „pojedynczą”. W wariancie 2
-            tabela tygodniowa uwzględni rzeczywisty rozkład.
+            Do Bożego Narodzenia realizowane są w podwojonej liczbie, ale płacone w „pojedynczej” —
+            wynagrodzenie jest wypłacane również od 1 stycznia 2027. W wariancie 1 wpisz liczbę
+            „pojedynczą”. W wariancie 2 tabela tygodniowa uwzględni rzeczywisty rozkład.
           </Callout>
           <Callout tone="info" title="Języki i matematyka w klasach 5">
-            Do świąt godzin jest mniej, a po 1 stycznia 2027 więcej. W wariancie 1 średnia i tak daje uśrednione
-            nadgodziny — niezależnie od tego, czy pracujesz więcej czy mniej.
+            Do świąt godzin jest mniej, a po 1 stycznia 2027 więcej. W wariancie 1 średnia i tak
+            daje uśrednione nadgodziny — niezależnie od tego, czy pracujesz więcej czy mniej.
           </Callout>
           <Callout tone="warn" title="Zastępstwa i nauczanie indywidualne">
-            Zastępstwa są dodawane oddzielnie (dodasz je w zakładce „Wydarzenia”). Indywidualne rozliczane jest
-            osobno i tylko za zajęcia z tematem i frekwencją w dzienniku ucznia.
+            Zastępstwa są dodawane oddzielnie (dodasz je w zakładce „Wydarzenia”). Indywidualne
+            rozliczane jest osobno i tylko za zajęcia z tematem i frekwencją w dzienniku ucznia.
           </Callout>
         </div>
       </div>
@@ -201,7 +218,11 @@ function Tile({
     >
       <p className="text-xs text-muted">{label}</p>
       <p className="mt-1 flex items-baseline gap-1.5">
-        <CountUp value={value} decimals={decimals} className="num text-2xl font-semibold tracking-tight" />
+        <CountUp
+          value={value}
+          decimals={decimals}
+          className="num text-2xl font-semibold tracking-tight"
+        />
         {unit && <span className="text-sm text-muted">{unit}</span>}
       </p>
     </motion.div>

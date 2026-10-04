@@ -56,50 +56,78 @@ export default function RulesPage() {
           Zasady <span className="text-brand">rozliczania</span> nadgodzin
         </h1>
         <p className="max-w-3xl text-muted">
-          Tak liczy kalkulator — to zasady dyrektora, zapisane krok po kroku. Wagi i parametry może zmieniać
-          administrator, dlatego tutaj zawsze widać aktualne wartości.
+          Tak liczy kalkulator — to zasady dyrektora, zapisane krok po kroku. Wagi i parametry może
+          zmieniać administrator, dlatego tutaj zawsze widać aktualne wartości.
         </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-          <CardHeader icon={<Sigma className="size-5" />} title="Wariant 1 — godziny uśrednione" description="Od lat stosowany system: nauczyciel dostaje te same nadgodziny co miesiąc." />
+          <CardHeader
+            icon={<Sigma className="size-5" />}
+            title="Wariant 1 — godziny uśrednione"
+            description="Od lat stosowany system: nauczyciel dostaje te same nadgodziny co miesiąc."
+          />
           <CardBody className="space-y-3 text-sm leading-relaxed">
             <p>
               Pełną wagę „1” mają tylko godziny w klasach 1 i 2. Godzina w klasach 3 i 4 „waży” ok.{' '}
-              <b>{fmt(settings.weights.k34)}</b>, a w klasach 5 ok. <b>{fmt(settings.weights.k5)}</b>. Do liczenia
-              nadgodzin stosuje się wymiar nauczycielski, nie uczniowski.
+              <b>{fmt(settings.weights.k34)}</b>, a w klasach 5 ok.{' '}
+              <b>{fmt(settings.weights.k5)}</b>. Do liczenia nadgodzin stosuje się wymiar
+              nauczycielski, nie uczniowski.
             </p>
             <ol className="space-y-1.5 rounded-xl bg-surface-2/60 p-4 font-mono text-[13px]">
               <li>1. godziny ważone = Σ godziny × waga</li>
               <li>2. nadgodziny / tydzień = ważone − pensum</li>
-              <li>3. nadgodziny / miesiąc = tygodniowe × {fmt2(settings.weeksPerMonth)}, w zaokrągleniu</li>
+              <li>
+                3. nadgodziny / miesiąc = tygodniowe × {fmt2(settings.weeksPerMonth)}, w
+                zaokrągleniu
+              </li>
               <li>4. nieobecność: miesięczne ÷ dni robocze × dni nieobecności</li>
             </ol>
-            <p className="text-muted">Zastępstwa i nauczanie indywidualne rozliczane są oddzielnie.</p>
+            <p className="text-muted">
+              Zastępstwa i nauczanie indywidualne rozliczane są oddzielnie.
+            </p>
           </CardBody>
         </Card>
 
-        <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-          <CardHeader icon={<ListChecks className="size-5" />} title="Wariant 2 — według realnego przydziału" description="Dla tych, którzy chcą mieć płacone godziny faktycznie wynikające z danego miesiąca." />
+        <Card
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+        >
+          <CardHeader
+            icon={<ListChecks className="size-5" />}
+            title="Wariant 2 — według realnego przydziału"
+            description="Dla tych, którzy chcą mieć płacone godziny faktycznie wynikające z danego miesiąca."
+          />
           <CardBody className="space-y-3 text-sm leading-relaxed">
             <p>
-              Nauczyciel wypełnia tabelę z rozpisaniem na poszczególne tygodnie — od 1.09.2026 do 25.06.2027. Zlicza
-              wszystkie realne godziny i odnosi je do pensum (18, 20, 22 lub 30, zależnie od zatrudnienia).
+              Nauczyciel wypełnia tabelę z rozpisaniem na poszczególne tygodnie — od 1.09.2026 do
+              25.06.2027. Zlicza wszystkie realne godziny i odnosi je do pensum (18, 20, 22 lub 30,
+              zależnie od zatrudnienia).
             </p>
             <ul className="list-disc space-y-1.5 pl-5 marker:text-brand">
-              <li>Godziny powyżej <b>pensum uśrednionego</b> (np. 21 zamiast 18) są ponadwymiarowe.</li>
+              <li>
+                Godziny powyżej <b>pensum uśrednionego</b> (np. 21 zamiast 18) są ponadwymiarowe.
+              </li>
               <li>Praktyki i klasy 5 po 30 kwietnia — godziny się odejmuje.</li>
               <li>Nieobecność (wycieczka, szkolenie) to niezrealizowane zajęcia — odliczamy.</li>
               <li>Dni egzaminów — nadgodziny niepłatne.</li>
               <li>Księgowość rozlicza pełne miesiące.</li>
             </ul>
-            <p className="text-muted">Każdy musi uśrednić pensum — także nauczyciele z niepełnym wymiarem.</p>
+            <p className="text-muted">
+              Każdy musi uśrednić pensum — także nauczyciele z niepełnym wymiarem.
+            </p>
           </CardBody>
         </Card>
       </div>
 
-      <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="overflow-hidden">
+      <Card
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="overflow-hidden"
+      >
         <CardHeader
           icon={<FlaskConical className="size-5" />}
           title="Przykład dyrektora — przelicz na żywo"
@@ -107,27 +135,75 @@ export default function RulesPage() {
         />
         <CardBody className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Godziny ważone">{(id) => <NumberField id={id} value={weighted} onChange={setWeighted} min={0} max={60} step={0.01} />}</Field>
-            <Field label="Pensum">{(id) => <NumberField id={id} value={pensum} onChange={setPensum} min={1} max={60} step={0.5} />}</Field>
-            <Field label="Dni robocze w miesiącu" hint="np. wrzesień 2026 = 22">{(id) => <NumberField id={id} value={workdays} onChange={setWorkdays} min={1} max={23} />}</Field>
-            <Field label="Dni nieobecności">{(id) => <NumberField id={id} value={absent} onChange={setAbsent} min={0} max={23} step={0.5} />}</Field>
+            <Field label="Godziny ważone">
+              {(id) => (
+                <NumberField
+                  id={id}
+                  value={weighted}
+                  onChange={setWeighted}
+                  min={0}
+                  max={60}
+                  step={0.01}
+                />
+              )}
+            </Field>
+            <Field label="Pensum">
+              {(id) => (
+                <NumberField
+                  id={id}
+                  value={pensum}
+                  onChange={setPensum}
+                  min={1}
+                  max={60}
+                  step={0.5}
+                />
+              )}
+            </Field>
+            <Field label="Dni robocze w miesiącu" hint="np. wrzesień 2026 = 22">
+              {(id) => (
+                <NumberField id={id} value={workdays} onChange={setWorkdays} min={1} max={23} />
+              )}
+            </Field>
+            <Field label="Dni nieobecności">
+              {(id) => (
+                <NumberField
+                  id={id}
+                  value={absent}
+                  onChange={setAbsent}
+                  min={0}
+                  max={23}
+                  step={0.5}
+                />
+              )}
+            </Field>
           </div>
           <div className="space-y-2 rounded-2xl bg-surface-2/60 p-4 font-mono text-[13px]">
-            <Line>{fmt2(weighted)} − {fmt(pensum)} = <b>{fmt2(core.weeklyOvertime)}</b> godz. nadgodzin / tydzień</Line>
             <Line>
-              {fmt2(core.weeklyOvertime)} × {fmt2(settings.weeksPerMonth)} = {fmt2(core.monthlyRaw)} → <b>{monthly}</b> godz. / miesiąc
+              {fmt2(weighted)} − {fmt(pensum)} = <b>{fmt2(core.weeklyOvertime)}</b> godz. nadgodzin
+              / tydzień
+            </Line>
+            <Line>
+              {fmt2(core.weeklyOvertime)} × {fmt2(settings.weeksPerMonth)} = {fmt2(core.monthlyRaw)}{' '}
+              → <b>{monthly}</b> godz. / miesiąc
             </Line>
             <Line>
               {monthly} : {workdays} = {fmt2(ded.perDay)}
             </Line>
             <Line>
-              {fmt2(ded.perDay)} × {fmt(absent)} = {fmt2(ded.deductionRaw)} → odejmujemy <b>{ded.deduction}</b>
+              {fmt2(ded.perDay)} × {fmt(absent)} = {fmt2(ded.deductionRaw)} → odejmujemy{' '}
+              <b>{ded.deduction}</b>
             </Line>
-            <motion.div layout className="mt-3 flex items-baseline justify-between rounded-xl bg-brand-soft px-4 py-3 font-sans">
+            <motion.div
+              layout
+              className="mt-3 flex items-baseline justify-between rounded-xl bg-brand-soft px-4 py-3 font-sans"
+            >
               <span className="text-sm text-muted">
                 {monthly} − {ded.deduction} = godzin do wypłaty po uwzględnieniu nieobecności
               </span>
-              <CountUp value={payout} className="num text-4xl font-semibold tracking-tight text-brand" />
+              <CountUp
+                value={payout}
+                className="num text-4xl font-semibold tracking-tight text-brand"
+              />
             </motion.div>
           </div>
         </CardBody>
@@ -135,7 +211,10 @@ export default function RulesPage() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <Card>
-          <CardHeader title="Aktualne wagi i parametry" description="Ustawiane przez administratora." />
+          <CardHeader
+            title="Aktualne wagi i parametry"
+            description="Ustawiane przez administratora."
+          />
           <CardBody>
             <dl className="divide-y divide-line text-sm">
               {[
@@ -143,8 +222,20 @@ export default function RulesPage() {
                 ['Klasy 3–4', fmt(settings.weights.k34)],
                 ['Klasy 5', fmt(settings.weights.k5)],
                 ['Tygodni w miesiącu', fmt2(settings.weeksPerMonth)],
-                ['Zaokrąglanie', settings.rounding === 'nearest' ? 'do najbliższej godziny' : settings.rounding === 'up' ? 'w górę' : 'w dół'],
-                ['Dni robocze w odliczeniu', settings.workdaysBasis === 'working-days' ? 'pn–pt bez świąt' : 'dni zajęć w szkole'],
+                [
+                  'Zaokrąglanie',
+                  settings.rounding === 'nearest'
+                    ? 'do najbliższej godziny'
+                    : settings.rounding === 'up'
+                      ? 'w górę'
+                      : 'w dół',
+                ],
+                [
+                  'Dni robocze w odliczeniu',
+                  settings.workdaysBasis === 'working-days'
+                    ? 'pn–pt bez świąt'
+                    : 'dni zajęć w szkole',
+                ],
                 ['Zajęcia kl. 5 do', settings.class5EndDate.split('-').reverse().join('.')],
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between py-2.5">
@@ -179,8 +270,8 @@ export default function RulesPage() {
       </div>
 
       <Callout tone="warn" title="Kalkulator pomaga policzyć, ale nie zastępuje decyzji dyrektora">
-        Ostateczne rozliczenie zatwierdza dyrektor i księgowość. Jeżeli zasady się zmienią, administrator zaktualizuje
-        wagi i parametry — wyniki przeliczą się automatycznie.
+        Ostateczne rozliczenie zatwierdza dyrektor i księgowość. Jeżeli zasady się zmienią,
+        administrator zaktualizuje wagi i parametry — wyniki przeliczą się automatycznie.
       </Callout>
     </div>
   );

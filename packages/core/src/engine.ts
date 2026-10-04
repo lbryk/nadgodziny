@@ -1,10 +1,4 @@
-import {
-  eachDay,
-  monthKeyOf,
-  weekdayOf,
-  type ISODate,
-  type MonthKey,
-} from './dates';
+import { eachDay, monthKeyOf, weekdayOf, type ISODate, type MonthKey } from './dates';
 import { isEditableKind } from './calendar';
 import { parseCell } from './cells';
 import { D, Decimal, ZERO, clampNonNegative, r2, roundHours, sum } from './num';
@@ -289,7 +283,13 @@ function computeVariant2(
       label: m.label,
       rows: monthRows,
       hours: sum(monthRows.map((r) => r.hours)).toNumber(),
-      pensum: r2(sum(monthRows.map((r) => (averaged === null ? D(pensum).times(r.weight) : D(averaged).times(r.weight))))),
+      pensum: r2(
+        sum(
+          monthRows.map((r) =>
+            averaged === null ? D(pensum).times(r.weight) : D(averaged).times(r.weight),
+          ),
+        ),
+      ),
       overtimeRaw: r2(raw),
       overtime: roundHours(raw, settings.rounding),
     };
@@ -313,7 +313,11 @@ function computeVariant2(
  * ------------------------------------------------------------------------------------------- */
 
 /** Core of variant 1, kept separate so it can be tested against the worked example. */
-export function variant1Core(weighted: Decimal.Value, pensum: Decimal.Value, weeksPerMonth: Decimal.Value) {
+export function variant1Core(
+  weighted: Decimal.Value,
+  pensum: Decimal.Value,
+  weeksPerMonth: Decimal.Value,
+) {
   const weeklyDiff = D(weighted).minus(pensum);
   const weeklyOvertime = clampNonNegative(weeklyDiff);
   const monthlyRaw = weeklyOvertime.times(weeksPerMonth);

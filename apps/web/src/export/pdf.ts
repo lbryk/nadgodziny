@@ -5,10 +5,23 @@ import type { Report, ReportCell } from './report-model';
 const C = PRINT_COLORS;
 
 function dayCell(cell: ReportCell): TableCell {
-  const fill = cell.kind === 'off' ? C.off : cell.kind === 'void' ? C.void : cell.kind === 'exam' ? C.exam : undefined;
+  const fill =
+    cell.kind === 'off'
+      ? C.off
+      : cell.kind === 'void'
+        ? C.void
+        : cell.kind === 'exam'
+          ? C.exam
+          : undefined;
   const parts: Content[] = [];
-  if (cell.regular) parts.push({ text: cell.regular, decoration: cell.excluded ? 'lineThrough' : undefined });
-  if (cell.individual) parts.push({ text: cell.regular ? `+${cell.individual}` : cell.individual, color: C.green, bold: true });
+  if (cell.regular)
+    parts.push({ text: cell.regular, decoration: cell.excluded ? 'lineThrough' : undefined });
+  if (cell.individual)
+    parts.push({
+      text: cell.regular ? `+${cell.individual}` : cell.individual,
+      color: C.green,
+      bold: true,
+    });
   return {
     text: parts.length ? parts : '',
     alignment: 'center',
@@ -19,8 +32,16 @@ function dayCell(cell: ReportCell): TableCell {
 function weeklyTable(report: Report): Content {
   const head1: TableCell[] = [
     { text: '', rowSpan: 2 },
-    { text: 'Liczba godzin do zrealizowania w podziale na dni tygodnia', colSpan: 5, alignment: 'center', bold: true },
-    {}, {}, {}, {},
+    {
+      text: 'Liczba godzin do zrealizowania w podziale na dni tygodnia',
+      colSpan: 5,
+      alignment: 'center',
+      bold: true,
+    },
+    {},
+    {},
+    {},
+    {},
     { text: 'Liczba godzin razem', rowSpan: 2, alignment: 'center', bold: true },
     { text: 'Pensum uśrednione', rowSpan: 2, alignment: 'center', bold: true },
     { text: 'Liczba godzin ponadwymiarowych', rowSpan: 2, alignment: 'center', bold: true },
@@ -28,7 +49,9 @@ function weeklyTable(report: Report): Content {
   const head2: TableCell[] = [
     {},
     ...report.weekdays.map((d) => ({ text: d, alignment: 'center', bold: true })),
-    {}, {}, {},
+    {},
+    {},
+    {},
   ].map((c) => ({ fillColor: C.head, ...c })) as TableCell[];
 
   const body: TableCell[][] = [head1, head2];
@@ -41,15 +64,34 @@ function weeklyTable(report: Report): Content {
         ...row.cells.map(dayCell),
         { text: row.hours, alignment: 'center' },
         { text: row.pensum, alignment: 'center' },
-        { text: row.overtime, alignment: 'center', bold: row.overtime !== '' && row.overtime !== '0,00' },
+        {
+          text: row.overtime,
+          alignment: 'center',
+          bold: row.overtime !== '' && row.overtime !== '0,00',
+        },
       ]);
     });
     body.push([
-      { text: `${month.label} — razem`, colSpan: 6, alignment: 'right', italics: true, fillColor: C.soft },
-      {}, {}, {}, {}, {},
+      {
+        text: `${month.label} — razem`,
+        colSpan: 6,
+        alignment: 'right',
+        italics: true,
+        fillColor: C.soft,
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
       { text: month.hours, alignment: 'center', bold: true, fillColor: C.soft },
       { text: month.pensum, alignment: 'center', fillColor: C.soft },
-      { text: `${month.overtimeRaw}  →  ${month.payable} godz.`, alignment: 'center', bold: true, fillColor: C.soft },
+      {
+        text: `${month.overtimeRaw}  →  ${month.payable} godz.`,
+        alignment: 'center',
+        bold: true,
+        fillColor: C.soft,
+      },
     ]);
   }
 
@@ -76,7 +118,13 @@ function weeklyTable(report: Report): Content {
 
 function kvTable(rows: { label: string; value: string }[]): Content {
   return {
-    table: { widths: [190, '*'], body: rows.map((r) => [{ text: r.label, color: '#555' }, { text: r.value, bold: true }]) },
+    table: {
+      widths: [190, '*'],
+      body: rows.map((r) => [
+        { text: r.label, color: '#555' },
+        { text: r.value, bold: true },
+      ]),
+    },
     layout: 'lightHorizontalLines',
     fontSize: 9,
     margin: [0, 2, 0, 8],
@@ -86,19 +134,46 @@ function kvTable(rows: { label: string; value: string }[]): Content {
 export function buildPdfDefinition(report: Report, opts: ReportOptions): TDocumentDefinitions {
   const content: Content[] = [
     { text: report.heading, bold: true, fontSize: 12, margin: [0, 0, 0, 2] },
-    { text: '*Wypełnia każdy nauczyciel', italics: true, fontSize: 8, color: '#555', margin: [0, 0, 0, 6] },
     {
-      table: { widths: ['*'], body: [[{ text: `Imię nazwisko:  ${report.teacherName || '………………………………………'}`, fontSize: 10, margin: [2, 6, 2, 12] }]] },
+      text: '*Wypełnia każdy nauczyciel',
+      italics: true,
+      fontSize: 8,
+      color: '#555',
+      margin: [0, 0, 0, 6],
+    },
+    {
+      table: {
+        widths: ['*'],
+        body: [
+          [
+            {
+              text: `Imię nazwisko:  ${report.teacherName || '………………………………………'}`,
+              fontSize: 10,
+              margin: [2, 6, 2, 12],
+            },
+          ],
+        ],
+      },
       layout: { hLineWidth: () => 1, vLineWidth: () => 1 },
       margin: [0, 0, 0, 4],
     } as Content,
-    { text: `${report.schoolName} · ${report.variantLabel} · ${report.generatedAt}`, fontSize: 8, color: '#555', margin: [0, 0, 0, 8] },
+    {
+      text: `${report.schoolName} · ${report.variantLabel} · ${report.generatedAt}`,
+      fontSize: 8,
+      color: '#555',
+      margin: [0, 0, 0, 8],
+    },
   ];
 
   if (opts.weekly) content.push(weeklyTable(report));
 
   const summary: Content[] = [
-    { text: `Podsumowanie rozliczenia — ${report.variantLabel}`, bold: true, fontSize: 12, margin: [0, 0, 0, 6] },
+    {
+      text: `Podsumowanie rozliczenia — ${report.variantLabel}`,
+      bold: true,
+      fontSize: 12,
+      margin: [0, 0, 0, 6],
+    },
     kvTable(report.facts),
   ];
   if (opts.steps && report.variant === 1) {
@@ -107,7 +182,11 @@ export function buildPdfDefinition(report: Report, opts: ReportOptions): TDocume
       {
         table: {
           widths: [150, '*', 90],
-          body: report.v1Steps.map((s) => [{ text: s.label }, { text: s.math, font: 'Roboto', color: '#555' }, { text: s.result, bold: true, alignment: 'right' }]),
+          body: report.v1Steps.map((s) => [
+            { text: s.label },
+            { text: s.math, font: 'Roboto', color: '#555' },
+            { text: s.result, bold: true, alignment: 'right' },
+          ]),
         },
         layout: 'lightHorizontalLines',
         fontSize: 9,
@@ -117,20 +196,46 @@ export function buildPdfDefinition(report: Report, opts: ReportOptions): TDocume
   }
   if (opts.monthly) {
     summary.push(
-      { text: 'Rozliczenie miesięczne (księgowość rozlicza pełne miesiące)', bold: true, fontSize: 10, margin: [0, 4, 0, 3] },
+      {
+        text: 'Rozliczenie miesięczne (księgowość rozlicza pełne miesiące)',
+        bold: true,
+        fontSize: 10,
+        margin: [0, 4, 0, 3],
+      },
       {
         table: {
           headerRows: 1,
           widths: [96, '*', '*', '*', '*', '*', '*', 44],
           body: [
-            report.monthlyHeader.map((h, i) => ({ text: h, bold: true, fillColor: C.head, alignment: i === 0 ? 'left' : 'center' }) as TableCell),
-            ...report.monthlyLines.map((l) => [
-              { text: l.label },
-              ...l.cells.map((c, i) => ({ text: c, alignment: 'center', bold: i === l.cells.length - 1 }) as TableCell),
-            ] as TableCell[]),
+            report.monthlyHeader.map(
+              (h, i) =>
+                ({
+                  text: h,
+                  bold: true,
+                  fillColor: C.head,
+                  alignment: i === 0 ? 'left' : 'center',
+                }) as TableCell,
+            ),
+            ...report.monthlyLines.map(
+              (l) =>
+                [
+                  { text: l.label },
+                  ...l.cells.map(
+                    (c, i) =>
+                      ({
+                        text: c,
+                        alignment: 'center',
+                        bold: i === l.cells.length - 1,
+                      }) as TableCell,
+                  ),
+                ] as TableCell[],
+            ),
             [
               { text: 'Razem', bold: true, fillColor: C.soft },
-              ...report.monthlyTotal.map((c) => ({ text: c, bold: true, alignment: 'center', fillColor: C.soft }) as TableCell),
+              ...report.monthlyTotal.map(
+                (c) =>
+                  ({ text: c, bold: true, alignment: 'center', fillColor: C.soft }) as TableCell,
+              ),
             ] as TableCell[],
           ],
         },
@@ -142,14 +247,29 @@ export function buildPdfDefinition(report: Report, opts: ReportOptions): TDocume
   }
   if (opts.events && report.events.length) {
     summary.push(
-      { text: 'Wydarzenia wpływające na rozliczenie', bold: true, fontSize: 10, margin: [0, 4, 0, 3] },
+      {
+        text: 'Wydarzenia wpływające na rozliczenie',
+        bold: true,
+        fontSize: 10,
+        margin: [0, 4, 0, 3],
+      },
       {
         table: {
           headerRows: 1,
           widths: [150, 90, '*', 110],
           body: [
-            ['Wydarzenie', 'Termin', 'Wpływ na zajęcia', 'Rozliczenie'].map((h) => ({ text: h, bold: true, fillColor: C.head }) as TableCell),
-            ...report.events.map((e) => [{ text: e.title }, { text: e.range, noWrap: true }, { text: e.effect }, { text: e.settlement }] as TableCell[]),
+            ['Wydarzenie', 'Termin', 'Wpływ na zajęcia', 'Rozliczenie'].map(
+              (h) => ({ text: h, bold: true, fillColor: C.head }) as TableCell,
+            ),
+            ...report.events.map(
+              (e) =>
+                [
+                  { text: e.title },
+                  { text: e.range, noWrap: true },
+                  { text: e.effect },
+                  { text: e.settlement },
+                ] as TableCell[],
+            ),
           ],
         },
         layout: 'lightHorizontalLines',
@@ -159,10 +279,11 @@ export function buildPdfDefinition(report: Report, opts: ReportOptions): TDocume
     );
   }
   if (opts.steps) {
-    summary.push(
-      { text: 'Informacje dodatkowe', bold: true, fontSize: 10, margin: [0, 4, 0, 3] },
-      { ul: report.notes, fontSize: 8, color: '#333' } as Content,
-    );
+    summary.push({ text: 'Informacje dodatkowe', bold: true, fontSize: 10, margin: [0, 4, 0, 3] }, {
+      ul: report.notes,
+      fontSize: 8,
+      color: '#333',
+    } as Content);
   }
 
   // The summary starts on a new page only when the weekly table is on the document.
@@ -172,13 +293,28 @@ export function buildPdfDefinition(report: Report, opts: ReportOptions): TDocume
   return {
     pageSize: 'A4',
     pageMargins: [28, 28, 28, 36],
-    info: { title: report.title, author: report.teacherName || 'Nauczyciel', subject: 'Rozliczenie nadgodzin' },
+    info: {
+      title: report.title,
+      author: report.teacherName || 'Nauczyciel',
+      subject: 'Rozliczenie nadgodzin',
+    },
     defaultStyle: { font: 'Roboto', fontSize: 9 },
     content,
     footer: (current: number, total: number) => ({
       columns: [
-        { text: `${report.teacherName || 'Nauczyciel'} · rok szkolny ${report.schoolYear}`, fontSize: 7, color: '#777', margin: [28, 0, 0, 0] },
-        { text: `Strona ${current} / ${total}`, alignment: 'right', fontSize: 7, color: '#777', margin: [0, 0, 28, 0] },
+        {
+          text: `${report.teacherName || 'Nauczyciel'} · rok szkolny ${report.schoolYear}`,
+          fontSize: 7,
+          color: '#777',
+          margin: [28, 0, 0, 0],
+        },
+        {
+          text: `Strona ${current} / ${total}`,
+          alignment: 'right',
+          fontSize: 7,
+          color: '#777',
+          margin: [0, 0, 28, 0],
+        },
       ],
     }),
   };
@@ -186,12 +322,19 @@ export function buildPdfDefinition(report: Report, opts: ReportOptions): TDocume
 
 type PdfMakeModule = {
   addVirtualFileSystem: (vfs: unknown) => void;
-  createPdf: (doc: TDocumentDefinitions) => { download: (name: string) => Promise<void>; getBlob: () => Promise<Blob> };
+  createPdf: (doc: TDocumentDefinitions) => {
+    download: (name: string) => Promise<void>;
+    getBlob: () => Promise<Blob>;
+  };
 };
 
 async function loadPdfMake(): Promise<PdfMakeModule> {
-  const [pdfMakeMod, vfsMod] = await Promise.all([import('pdfmake/build/pdfmake'), import('pdfmake/build/vfs_fonts')]);
-  const pdfMake = ((pdfMakeMod as { default?: PdfMakeModule }).default ?? pdfMakeMod) as PdfMakeModule;
+  const [pdfMakeMod, vfsMod] = await Promise.all([
+    import('pdfmake/build/pdfmake'),
+    import('pdfmake/build/vfs_fonts'),
+  ]);
+  const pdfMake = ((pdfMakeMod as { default?: PdfMakeModule }).default ??
+    pdfMakeMod) as PdfMakeModule;
   const vfs = (vfsMod as { default?: unknown }).default ?? vfsMod;
   pdfMake.addVirtualFileSystem(vfs);
   return pdfMake;

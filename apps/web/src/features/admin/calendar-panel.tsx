@@ -59,9 +59,16 @@ const addSchema = z
   })
   .superRefine((v, ctx) => {
     if (v.mode === 'range') {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(v.to)) ctx.addIssue({ code: 'custom', path: ['to'], message: 'Wybierz datę końcową.' });
-      else if (v.to < v.from) ctx.addIssue({ code: 'custom', path: ['to'], message: 'Data końcowa jest przed początkową.' });
-      else if (eachDay(v.from, v.to).length > 150) ctx.addIssue({ code: 'custom', path: ['to'], message: 'Maksymalnie 150 dni naraz.' });
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(v.to))
+        ctx.addIssue({ code: 'custom', path: ['to'], message: 'Wybierz datę końcową.' });
+      else if (v.to < v.from)
+        ctx.addIssue({
+          code: 'custom',
+          path: ['to'],
+          message: 'Data końcowa jest przed początkową.',
+        });
+      else if (eachDay(v.from, v.to).length > 150)
+        ctx.addIssue({ code: 'custom', path: ['to'], message: 'Maksymalnie 150 dni naraz.' });
     }
   });
 type AddValues = z.infer<typeof addSchema>;
@@ -95,27 +102,31 @@ export default function CalendarPanel() {
   });
 
   /** Merge by date (the newest entry wins) and keep the list sorted. */
-  const merge = useCallback(
-    (incoming: CustomDay[], replace = false) => {
-      setDays((prev) => {
-        const map = new Map((replace ? [] : prev).map((d) => [d.date, d] as const));
-        for (const d of incoming) map.set(d.date, d);
-        return [...map.values()].sort((a, b) => a.date.localeCompare(b.date));
-      });
-    },
-    [],
-  );
+  const merge = useCallback((incoming: CustomDay[], replace = false) => {
+    setDays((prev) => {
+      const map = new Map((replace ? [] : prev).map((d) => [d.date, d] as const));
+      for (const d of incoming) map.set(d.date, d);
+      return [...map.values()].sort((a, b) => a.date.localeCompare(b.date));
+    });
+  }, []);
 
   const applyImport = (selected: CustomDay[]) => {
     merge(selected, replaceAll);
     setCandidates([]);
-    toast.success(`Dodano ${selected.length} dni do kalendarza. Kliknij „Zapisz kalendarz”, aby opublikować.`);
+    toast.success(
+      `Dodano ${selected.length} dni do kalendarza. Kliknij „Zapisz kalendarz”, aby opublikować.`,
+    );
   };
 
   const preview = useMemo(() => {
     const before = buildCalendar({ settings: config.settings, customDays: config.customDays });
     const after = buildCalendar({ settings: config.settings, customDays: days });
-    return after.months.map((m, i) => ({ key: m.key, label: m.label.split(' ')[0]!, days: m.teachingDays, delta: m.teachingDays - before.months[i]!.teachingDays }));
+    return after.months.map((m, i) => ({
+      key: m.key,
+      label: m.label.split(' ')[0]!,
+      days: m.teachingDays,
+      delta: m.teachingDays - before.months[i]!.teachingDays,
+    }));
   }, [config.settings, config.customDays, days]);
 
   /* -------- single day / range form -------- */
@@ -139,7 +150,11 @@ export default function CalendarPanel() {
     <div className="space-y-6">
       <div className="grid items-start gap-6 xl:grid-cols-2">
         <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-          <CardHeader icon={<CalendarPlus className="size-5" />} title="Dodaj dzień wolny lub egzamin" description="Formularz: pojedynczy dzień albo zakres (weekendy są pomijane)." />
+          <CardHeader
+            icon={<CalendarPlus className="size-5" />}
+            title="Dodaj dzień wolny lub egzamin"
+            description="Formularz: pojedynczy dzień albo zakres (weekendy są pomijane)."
+          />
           <CardBody>
             <form onSubmit={submitAdd} className="space-y-4" noValidate>
               <Controller
@@ -158,17 +173,28 @@ export default function CalendarPanel() {
                 )}
               />
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field label={addMode === 'range' ? 'Od' : 'Data'} error={form.formState.errors.from?.message}>
-                  {(id) => <input id={id} type="date" className={inputClass} {...form.register('from')} />}
+                <Field
+                  label={addMode === 'range' ? 'Od' : 'Data'}
+                  error={form.formState.errors.from?.message}
+                >
+                  {(id) => (
+                    <input id={id} type="date" className={inputClass} {...form.register('from')} />
+                  )}
                 </Field>
                 {addMode === 'range' && (
                   <Field label="Do" error={form.formState.errors.to?.message}>
-                    {(id) => <input id={id} type="date" className={inputClass} {...form.register('to')} />}
+                    {(id) => (
+                      <input id={id} type="date" className={inputClass} {...form.register('to')} />
+                    )}
                   </Field>
                 )}
                 <Field label="Rodzaj">
                   {(id) => (
-                    <select id={id} className={cn(kindSelect, 'h-10 w-full')} {...form.register('kind')}>
+                    <select
+                      id={id}
+                      className={cn(kindSelect, 'h-10 w-full')}
+                      {...form.register('kind')}
+                    >
                       {EDITABLE_KINDS.map((k) => (
                         <option key={k} value={k}>
                           {DAY_KIND_LABEL[k]}
@@ -177,7 +203,16 @@ export default function CalendarPanel() {
                     </select>
                   )}
                 </Field>
-                <Field label="Opis (opcjonalnie)">{(id) => <Input id={id} maxLength={160} placeholder="np. Rada pedagogiczna" {...form.register('label')} />}</Field>
+                <Field label="Opis (opcjonalnie)">
+                  {(id) => (
+                    <Input
+                      id={id}
+                      maxLength={160}
+                      placeholder="np. Rada pedagogiczna"
+                      {...form.register('label')}
+                    />
+                  )}
+                </Field>
               </div>
               <Button type="submit" variant="primary">
                 <CalendarPlus className="size-4" /> Dodaj do kalendarza
@@ -186,8 +221,16 @@ export default function CalendarPanel() {
           </CardBody>
         </Card>
 
-        <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-          <CardHeader icon={<UploadCloud className="size-5" />} title="Import z pliku, zdjęcia lub tekstu" description="Zrzut ekranu lub zdjęcie kalendarza jest rozpoznawane w przeglądarce — nie opuszcza Twojego komputera." />
+        <Card
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+        >
+          <CardHeader
+            icon={<UploadCloud className="size-5" />}
+            title="Import z pliku, zdjęcia lub tekstu"
+            description="Zrzut ekranu lub zdjęcie kalendarza jest rozpoznawane w przeglądarce — nie opuszcza Twojego komputera."
+          />
           <CardBody className="space-y-4">
             <Segmented
               aria-label="Źródło importu"
@@ -197,20 +240,66 @@ export default function CalendarPanel() {
                 setCandidates([]);
               }}
               options={[
-                { value: 'plik', label: <span className="flex items-center gap-1.5"><FileCode2 className="size-4" /> XML / ICS</span> },
-                { value: 'zdjecie', label: <span className="flex items-center gap-1.5"><ImageUp className="size-4" /> Zdjęcie / zrzut</span> },
-                { value: 'tekst', label: <span className="flex items-center gap-1.5"><Type className="size-4" /> Tekst</span> },
+                {
+                  value: 'plik',
+                  label: (
+                    <span className="flex items-center gap-1.5">
+                      <FileCode2 className="size-4" /> XML / ICS
+                    </span>
+                  ),
+                },
+                {
+                  value: 'zdjecie',
+                  label: (
+                    <span className="flex items-center gap-1.5">
+                      <ImageUp className="size-4" /> Zdjęcie / zrzut
+                    </span>
+                  ),
+                },
+                {
+                  value: 'tekst',
+                  label: (
+                    <span className="flex items-center gap-1.5">
+                      <Type className="size-4" /> Tekst
+                    </span>
+                  ),
+                },
               ]}
             />
-            {mode === 'plik' && <FileImport schoolYearStart={config.settings.schoolYearStart} onFound={(c) => setCandidates(toCandidates(c))} />}
-            {mode === 'zdjecie' && <PhotoImport schoolYearStart={config.settings.schoolYearStart} onFound={(c) => setCandidates(toCandidates(c))} />}
-            {mode === 'tekst' && <TextImport schoolYearStart={config.settings.schoolYearStart} onFound={(c) => setCandidates(toCandidates(c))} />}
+            {mode === 'plik' && (
+              <FileImport
+                schoolYearStart={config.settings.schoolYearStart}
+                onFound={(c) => setCandidates(toCandidates(c))}
+              />
+            )}
+            {mode === 'zdjecie' && (
+              <PhotoImport
+                schoolYearStart={config.settings.schoolYearStart}
+                onFound={(c) => setCandidates(toCandidates(c))}
+              />
+            )}
+            {mode === 'tekst' && (
+              <TextImport
+                schoolYearStart={config.settings.schoolYearStart}
+                onFound={(c) => setCandidates(toCandidates(c))}
+              />
+            )}
 
             <AnimatePresence>
               {candidates.length > 0 && (
                 <div className="space-y-3 border-t border-line pt-4">
-                  <Toggle checked={replaceAll} onChange={setReplaceAll} label="Zastąp wszystkie dotychczasowe dni" description="Domyślnie nowe dni są dodawane, a te same daty nadpisywane." />
-                  <ImportReview items={candidates} onChange={setCandidates} onApply={applyImport} existing={existing} />
+                  <Toggle
+                    checked={replaceAll}
+                    onChange={setReplaceAll}
+                    label="Zastąp wszystkie dotychczasowe dni"
+                    description="Domyślnie nowe dni są dodawane, a te same daty nadpisywane."
+                  />
+                  <ImportReview
+                    items={candidates}
+                    onChange={setCandidates}
+                    onApply={applyImport}
+                    existing={existing}
+                  />
                 </div>
               )}
             </AnimatePresence>
@@ -218,16 +307,42 @@ export default function CalendarPanel() {
         </Card>
       </div>
 
-      <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+      <Card
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
         <CardHeader
           title={`Dni szkoły w kalendarzu (${days.length})`}
           description="Dni wolne ustalone przez dyrektora, egzaminy i inne nadpisania. Reszta (święta, przerwy, ferie) wynika z reguł i ustawień."
           actions={
             <>
-              <Button size="sm" variant="outline" onClick={() => saveAs(new Blob([buildCalendarXml(days, `${config.settings.schoolYearStart}/${config.settings.schoolYearStart + 1}`)], { type: 'application/xml' }), 'kalendarz.xml')}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() =>
+                  saveAs(
+                    new Blob(
+                      [
+                        buildCalendarXml(
+                          days,
+                          `${config.settings.schoolYearStart}/${config.settings.schoolYearStart + 1}`,
+                        ),
+                      ],
+                      { type: 'application/xml' },
+                    ),
+                    'kalendarz.xml',
+                  )
+                }
+              >
                 <FileDown className="size-3.5" /> Eksport XML
               </Button>
-              <Button size="sm" variant="danger" disabled={days.length === 0} onClick={() => setDays([])}>
+              <Button
+                size="sm"
+                variant="danger"
+                disabled={days.length === 0}
+                onClick={() => setDays([])}
+              >
                 <Trash2 className="size-3.5" /> Usuń wszystkie
               </Button>
             </>
@@ -243,9 +358,15 @@ export default function CalendarPanel() {
                   key={k}
                   type="button"
                   onClick={() => setFilter(k)}
-                  className={cn('rounded-full border px-3 py-1 text-xs font-medium transition-colors', filter === k ? 'border-brand bg-brand-soft text-brand' : 'border-line text-muted hover:text-ink')}
+                  className={cn(
+                    'rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                    filter === k
+                      ? 'border-brand bg-brand-soft text-brand'
+                      : 'border-line text-muted hover:text-ink',
+                  )}
                 >
-                  {k === 'all' ? 'Wszystkie' : DAY_KIND_LABEL[k]} <span className="num ml-1 opacity-70">{count}</span>
+                  {k === 'all' ? 'Wszystkie' : DAY_KIND_LABEL[k]}{' '}
+                  <span className="num ml-1 opacity-70">{count}</span>
                 </button>
               );
             })}
@@ -265,15 +386,32 @@ export default function CalendarPanel() {
               <tbody>
                 <AnimatePresence initial={false}>
                   {visible.map((d) => (
-                    <motion.tr key={d.date} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="border-t border-line">
+                    <motion.tr
+                      key={d.date}
+                      layout
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="border-t border-line"
+                    >
                       <td className="num px-3 py-1.5 whitespace-nowrap">{formatDMY(d.date)}</td>
-                      <td className="hidden px-3 py-1.5 text-muted sm:table-cell">{WEEKDAY_LONG_PL[weekdayOf(d.date) - 1]}</td>
+                      <td className="hidden px-3 py-1.5 text-muted sm:table-cell">
+                        {WEEKDAY_LONG_PL[weekdayOf(d.date) - 1]}
+                      </td>
                       <td className="px-3 py-1.5">
                         <select
                           className={kindSelect}
                           aria-label={`Rodzaj dnia ${formatDMY(d.date)}`}
                           value={d.kind}
-                          onChange={(e) => setDays((prev) => prev.map((x) => (x.date === d.date ? { ...x, kind: e.target.value as CustomDay['kind'] } : x)))}
+                          onChange={(e) =>
+                            setDays((prev) =>
+                              prev.map((x) =>
+                                x.date === d.date
+                                  ? { ...x, kind: e.target.value as CustomDay['kind'] }
+                                  : x,
+                              ),
+                            )
+                          }
                         >
                           {EDITABLE_KINDS.map((k) => (
                             <option key={k} value={k}>
@@ -287,11 +425,25 @@ export default function CalendarPanel() {
                           className="h-9 min-w-40"
                           value={d.label ?? ''}
                           aria-label={`Opis dnia ${formatDMY(d.date)}`}
-                          onChange={(e) => setDays((prev) => prev.map((x) => (x.date === d.date ? { ...x, label: e.target.value || undefined } : x)))}
+                          onChange={(e) =>
+                            setDays((prev) =>
+                              prev.map((x) =>
+                                x.date === d.date
+                                  ? { ...x, label: e.target.value || undefined }
+                                  : x,
+                              ),
+                            )
+                          }
                         />
                       </td>
                       <td className="px-2">
-                        <Button size="icon" variant="ghost" className="size-8 hover:text-danger" aria-label={`Usuń ${formatDMY(d.date)}`} onClick={() => setDays((prev) => prev.filter((x) => x.date !== d.date))}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="size-8 hover:text-danger"
+                          aria-label={`Usuń ${formatDMY(d.date)}`}
+                          onClick={() => setDays((prev) => prev.filter((x) => x.date !== d.date))}
+                        >
                           <Trash2 className="size-3.5" />
                         </Button>
                       </td>
@@ -315,7 +467,12 @@ export default function CalendarPanel() {
               {preview.map((m) => (
                 <Badge key={m.key} tone={m.delta === 0 ? 'neutral' : m.delta < 0 ? 'warn' : 'ok'}>
                   {m.label} <b className="num">{m.days}</b>
-                  {m.delta !== 0 && <span className="num">({m.delta > 0 ? '+' : ''}{m.delta})</span>}
+                  {m.delta !== 0 && (
+                    <span className="num">
+                      ({m.delta > 0 ? '+' : ''}
+                      {m.delta})
+                    </span>
+                  )}
                 </Badge>
               ))}
             </div>
@@ -323,14 +480,21 @@ export default function CalendarPanel() {
         </CardBody>
       </Card>
 
-      <motion.div layout className="glass sticky bottom-4 z-20 flex flex-wrap items-center gap-3 rounded-2xl border border-line p-3 shadow-pop">
+      <motion.div
+        layout
+        className="glass sticky bottom-4 z-20 flex flex-wrap items-center gap-3 rounded-2xl border border-line p-3 shadow-pop"
+      >
         <Button variant="primary" disabled={!dirty || save.isPending} onClick={() => save.mutate()}>
           <Save className="size-4" /> {save.isPending ? 'Zapisywanie…' : 'Zapisz kalendarz'}
         </Button>
         <Button variant="ghost" disabled={!dirty} onClick={() => setDays(config.customDays)}>
           <RotateCcw className="size-4" /> Odrzuć zmiany
         </Button>
-        <p className={cn('text-sm', dirty ? 'text-warn' : 'text-muted')}>{dirty ? 'Masz niezapisane zmiany w kalendarzu.' : 'Kalendarz zsynchronizowany z serwerem.'}</p>
+        <p className={cn('text-sm', dirty ? 'text-warn' : 'text-muted')}>
+          {dirty
+            ? 'Masz niezapisane zmiany w kalendarzu.'
+            : 'Kalendarz zsynchronizowany z serwerem.'}
+        </p>
       </motion.div>
     </div>
   );
@@ -409,18 +573,40 @@ function FileImport({ onFound }: { schoolYearStart: number; onFound: (days: Foun
   };
   return (
     <div className="space-y-3">
-      <Dropzone accept=".xml,.ics,text/xml,application/xml,text/calendar" onFile={async (f) => parse(await f.text(), f.name)}>
+      <Dropzone
+        accept=".xml,.ics,text/xml,application/xml,text/calendar"
+        onFile={async (f) => parse(await f.text(), f.name)}
+      >
         <FileCode2 className="size-8 text-brand" />
         <p className="text-sm font-medium">Upuść plik XML lub ICS albo kliknij, aby wybrać</p>
         <p className="text-xs text-muted">
-          Format XML: <code className="rounded bg-surface-2 px-1">&lt;dzien data="2026-10-14" typ="den"/&gt;</code> oraz{' '}
-          <code className="rounded bg-surface-2 px-1">&lt;zakres od="…" do="…" typ="ferie"/&gt;</code>
+          Format XML:{' '}
+          <code className="rounded bg-surface-2 px-1">
+            &lt;dzien data="2026-10-14" typ="den"/&gt;
+          </code>{' '}
+          oraz{' '}
+          <code className="rounded bg-surface-2 px-1">
+            &lt;zakres od="…" do="…" typ="ferie"/&gt;
+          </code>
         </p>
       </Dropzone>
       <details className="group rounded-xl border border-line px-3 py-2 text-sm">
-        <summary className="cursor-pointer text-muted group-open:mb-2">Albo wklej zawartość pliku XML</summary>
-        <textarea value={paste} onChange={(e) => setPaste(e.target.value)} rows={5} className={cn(inputClass, 'h-auto py-2 font-mono text-xs')} placeholder={'<kalendarz>\n  <dzien data="2026-10-14" typ="den"/>\n</kalendarz>'} />
-        <Button className="mt-2" size="sm" disabled={!paste.trim()} onClick={() => parse(paste, 'wklejone.xml')}>
+        <summary className="cursor-pointer text-muted group-open:mb-2">
+          Albo wklej zawartość pliku XML
+        </summary>
+        <textarea
+          value={paste}
+          onChange={(e) => setPaste(e.target.value)}
+          rows={5}
+          className={cn(inputClass, 'h-auto py-2 font-mono text-xs')}
+          placeholder={'<kalendarz>\n  <dzien data="2026-10-14" typ="den"/>\n</kalendarz>'}
+        />
+        <Button
+          className="mt-2"
+          size="sm"
+          disabled={!paste.trim()}
+          onClick={() => parse(paste, 'wklejone.xml')}
+        >
           Wczytaj XML
         </Button>
       </details>
@@ -428,7 +614,13 @@ function FileImport({ onFound }: { schoolYearStart: number; onFound: (days: Foun
   );
 }
 
-function PhotoImport({ schoolYearStart, onFound }: { schoolYearStart: number; onFound: (days: Found) => void }) {
+function PhotoImport({
+  schoolYearStart,
+  onFound,
+}: {
+  schoolYearStart: number;
+  onFound: (days: Found) => void;
+}) {
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('');
@@ -472,7 +664,9 @@ function PhotoImport({ schoolYearStart, onFound }: { schoolYearStart: number; on
   // Ctrl+V with a screenshot in the clipboard
   useEffect(() => {
     const onPaste = (e: ClipboardEvent) => {
-      const item = Array.from(e.clipboardData?.items ?? []).find((i) => i.type.startsWith('image/'));
+      const item = Array.from(e.clipboardData?.items ?? []).find((i) =>
+        i.type.startsWith('image/'),
+      );
       const file = item?.getAsFile();
       if (file) {
         e.preventDefault();
@@ -491,7 +685,9 @@ function PhotoImport({ schoolYearStart, onFound }: { schoolYearStart: number; on
         <ScanText className="size-8 text-brand" />
         <p className="text-sm font-medium">Upuść zdjęcie lub zrzut ekranu kalendarza</p>
         <p className="flex items-center gap-1.5 text-xs text-muted">
-          <ClipboardPaste className="size-3.5" /> Możesz też wkleić zrzut ekranu skrótem <kbd className="rounded border border-line bg-surface-2 px-1">Ctrl</kbd>+<kbd className="rounded border border-line bg-surface-2 px-1">V</kbd>
+          <ClipboardPaste className="size-3.5" /> Możesz też wkleić zrzut ekranu skrótem{' '}
+          <kbd className="rounded border border-line bg-surface-2 px-1">Ctrl</kbd>+
+          <kbd className="rounded border border-line bg-surface-2 px-1">V</kbd>
         </p>
       </Dropzone>
 
@@ -502,32 +698,57 @@ function PhotoImport({ schoolYearStart, onFound }: { schoolYearStart: number; on
             <span className="num">{Math.round(progress * 100)}%</span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-surface-2">
-            <motion.div className="h-full rounded-full bg-gradient-to-r from-brand to-accent" animate={{ width: `${Math.max(4, progress * 100)}%` }} />
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-brand to-accent"
+              animate={{ width: `${Math.max(4, progress * 100)}%` }}
+            />
           </div>
         </div>
       )}
 
       {preview && (
         <div className="grid gap-3 sm:grid-cols-2">
-          <img src={preview} alt="Wczytany obraz" className="max-h-52 w-full rounded-xl border border-line object-contain" />
+          <img
+            src={preview}
+            alt="Wczytany obraz"
+            className="max-h-52 w-full rounded-xl border border-line object-contain"
+          />
           <div>
-            <p className="mb-1 text-xs font-medium text-muted">Rozpoznany tekst (możesz poprawić)</p>
-            <textarea value={text} onChange={(e) => setText(e.target.value)} rows={7} className={cn(inputClass, 'h-auto py-2 font-mono text-xs')} aria-label="Rozpoznany tekst" />
-            <Button size="sm" className="mt-2" onClick={() => onFound(extractDaysFromText(text, { schoolYearStart }).days)}>
+            <p className="mb-1 text-xs font-medium text-muted">
+              Rozpoznany tekst (możesz poprawić)
+            </p>
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={7}
+              className={cn(inputClass, 'h-auto py-2 font-mono text-xs')}
+              aria-label="Rozpoznany tekst"
+            />
+            <Button
+              size="sm"
+              className="mt-2"
+              onClick={() => onFound(extractDaysFromText(text, { schoolYearStart }).days)}
+            >
               Wyszukaj daty ponownie
             </Button>
           </div>
         </div>
       )}
       <Callout title="Jak uzyskać dobry wynik?">
-        Wyraźne zdjęcie, bez cienia i perspektywy. Rozpoznanie jest podpowiedzią — zawsze sprawdź daty i rodzaje dni przed
-        dodaniem do kalendarza.
+        Wyraźne zdjęcie, bez cienia i perspektywy. Rozpoznanie jest podpowiedzią — zawsze sprawdź
+        daty i rodzaje dni przed dodaniem do kalendarza.
       </Callout>
     </div>
   );
 }
 
-function TextImport({ schoolYearStart, onFound }: { schoolYearStart: number; onFound: (days: Found) => void }) {
+function TextImport({
+  schoolYearStart,
+  onFound,
+}: {
+  schoolYearStart: number;
+  onFound: (days: Found) => void;
+}) {
   const [text, setText] = useState('');
   return (
     <div className="space-y-3">
@@ -537,10 +758,15 @@ function TextImport({ schoolYearStart, onFound }: { schoolYearStart: number; onF
         rows={7}
         aria-label="Tekst z datami"
         className={cn(inputClass, 'h-auto py-2')}
-        placeholder={'14.10.2026 – Dzień Edukacji Narodowej\nFerie zimowe: 01.02 – 14.02.2027\nEgzaminy: 4-7 maja 2027'}
+        placeholder={
+          '14.10.2026 – Dzień Edukacji Narodowej\nFerie zimowe: 01.02 – 14.02.2027\nEgzaminy: 4-7 maja 2027'
+        }
       />
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs text-muted">Jedna pozycja w wierszu. Rozumiemy m.in. 14.10.2026, 01.02 – 14.02.2027, 18-31 stycznia 2027.</p>
+        <p className="text-xs text-muted">
+          Jedna pozycja w wierszu. Rozumiemy m.in. 14.10.2026, 01.02 – 14.02.2027, 18-31 stycznia
+          2027.
+        </p>
         <Button
           variant="primary"
           disabled={!text.trim()}

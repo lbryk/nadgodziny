@@ -1,10 +1,17 @@
-import { DAY_KIND_LABEL, addDays, type Calendar, type CalendarDay, type DayKind } from '@nadgodziny/core';
+import {
+  DAY_KIND_LABEL,
+  addDays,
+  type Calendar,
+  type CalendarDay,
+  type DayKind,
+} from '@nadgodziny/core';
 import { saveAs } from 'file-saver';
 
 const OFF: DayKind[] = ['holiday', 'break', 'ferie', 'den', 'director', 'exam', 'other'];
 
 const icsDate = (iso: string) => iso.replaceAll('-', '');
-const esc = (t: string) => t.replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+const esc = (t: string) =>
+  t.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
 
 /** All-day events for every day off, consecutive days with the same name folded into one event. */
 export function buildCalendarIcs(calendar: Calendar, schoolName: string): string {
@@ -16,12 +23,23 @@ export function buildCalendarIcs(calendar: Calendar, schoolName: string): string
   for (const d of days) {
     const label = d.label ?? DAY_KIND_LABEL[d.kind];
     const last = events[events.length - 1];
-    if (last && last.kind === d.kind && last.label === label && addDays(last.to, 1) === d.date) last.to = d.date;
+    if (last && last.kind === d.kind && last.label === label && addDays(last.to, 1) === d.date)
+      last.to = d.date;
     else events.push({ from: d.date, to: d.date, label, kind: d.kind });
   }
   events.unshift(
-    { from: calendar.startDate, to: calendar.startDate, label: 'Rozpoczęcie roku szkolnego', kind: 'other' },
-    { from: calendar.endDate, to: calendar.endDate, label: 'Zakończenie roku szkolnego', kind: 'other' },
+    {
+      from: calendar.startDate,
+      to: calendar.startDate,
+      label: 'Rozpoczęcie roku szkolnego',
+      kind: 'other',
+    },
+    {
+      from: calendar.endDate,
+      to: calendar.endDate,
+      label: 'Zakończenie roku szkolnego',
+      kind: 'other',
+    },
   );
 
   const lines = [

@@ -1,6 +1,14 @@
 import { differenceInCalendarDays, format, parseISO } from 'date-fns';
 import { pl } from 'date-fns/locale';
-import { Bell, CalendarClock, CalendarRange, Clock, FileCheck2, ListChecks, UserRound } from 'lucide-react';
+import {
+  Bell,
+  CalendarClock,
+  CalendarRange,
+  Clock,
+  FileCheck2,
+  ListChecks,
+  UserRound,
+} from 'lucide-react';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import { lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -84,8 +92,8 @@ export default function CalculatorPage() {
           Kalkulator nadgodzin <span className="text-brand">nauczyciela</span>
         </h1>
         <p className="max-w-3xl text-muted">
-          Uzupełnij przydział, a system sam przeliczy nadgodziny według zasad dyrektora — w obu wariantach, z
-          uwzględnieniem kalendarza roku szkolnego, wycieczek i innych wydarzeń.
+          Uzupełnij przydział, a system sam przeliczy nadgodziny według zasad dyrektora — w obu
+          wariantach, z uwzględnieniem kalendarza roku szkolnego, wycieczek i innych wydarzeń.
         </p>
       </div>
 
@@ -132,7 +140,12 @@ export default function CalculatorPage() {
         </nav>
       </LayoutGroup>
 
-      <div className={cn('grid items-start gap-6', current !== 'wynik' && 'xl:grid-cols-[minmax(0,1fr)_360px]')}>
+      <div
+        className={cn(
+          'grid items-start gap-6',
+          current !== 'wynik' && 'xl:grid-cols-[minmax(0,1fr)_360px]',
+        )}
+      >
         <div className="min-w-0">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div

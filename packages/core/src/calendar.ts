@@ -229,11 +229,19 @@ function buildMonths(
     let teachingDays = 0;
     for (const d of eachDay(from, to)) {
       if (isWeekend(d)) continue;
-      const isHoliday = (holidays[d] !== undefined && !customWorking.has(d)) || customHolidays.has(d);
+      const isHoliday =
+        (holidays[d] !== undefined && !customWorking.has(d)) || customHolidays.has(d);
       if (!isHoliday) workdays += 1;
       if (days[d]?.kind === 'school') teachingDays += 1;
     }
-    months.push({ key, label: monthLabel(key), workdays, teachingDays, firstDate: from, lastDate: to });
+    months.push({
+      key,
+      label: monthLabel(key),
+      workdays,
+      teachingDays,
+      firstDate: from,
+      lastDate: to,
+    });
     key = nextMonthKey(key);
   }
   return months;

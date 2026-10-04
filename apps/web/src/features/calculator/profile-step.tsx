@@ -61,7 +61,9 @@ export function ProfileStep() {
           </Field>
 
           <div className="flex flex-col gap-1.5 sm:col-span-2">
-            <span className="text-[13px] font-medium">Pensum — pełny etat dla Twojego zatrudnienia</span>
+            <span className="text-[13px] font-medium">
+              Pensum — pełny etat dla Twojego zatrudnienia
+            </span>
             <div className="flex flex-wrap items-center gap-3">
               <Segmented
                 aria-label="Pensum"
@@ -101,7 +103,10 @@ export function ProfileStep() {
                 value={etat}
                 onChange={(v) => {
                   setCustomEtat(v === 'custom');
-                  if (v !== 'custom') setContractHours(Math.round(plan.pensumFull * (v === 'full' ? 1 : Number(v)) * 100) / 100);
+                  if (v !== 'custom')
+                    setContractHours(
+                      Math.round(plan.pensumFull * (v === 'full' ? 1 : Number(v)) * 100) / 100,
+                    );
                 }}
                 options={[
                   { value: 'full', label: 'Pełny etat' },
@@ -161,13 +166,17 @@ export function ProfileStep() {
         </CardBody>
       </Card>
 
-      <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
+      <Card
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.06 }}
+      >
         <CardHeader
           title="Który wariant rozliczenia?"
           description="Wariant możesz zmienić w każdej chwili — kalkulator zawsze liczy oba i pokazuje różnicę."
         />
         <CardBody className="grid gap-3 md:grid-cols-2">
-          {([
+          {[
             {
               v: 1 as const,
               title: 'Wariant 1 — uśredniony',
@@ -178,7 +187,7 @@ export function ProfileStep() {
               title: 'Wariant 2 — realny',
               body: 'Wypełniasz tabelę tygodniową z kalendarzem szkoły. Nadgodziny to godziny powyżej uśrednionego pensum, miesiąc po miesiącu, według faktycznego przydziału.',
             },
-          ]).map((o) => {
+          ].map((o) => {
             const active = plan.variant === o.v;
             return (
               <button
@@ -187,7 +196,9 @@ export function ProfileStep() {
                 onClick={() => patch({ variant: o.v })}
                 aria-pressed={active}
                 className={`rounded-2xl border p-4 text-left transition-all ${
-                  active ? 'border-brand bg-brand-soft ring-4 ring-brand/10' : 'border-line hover:border-brand/40'
+                  active
+                    ? 'border-brand bg-brand-soft ring-4 ring-brand/10'
+                    : 'border-line hover:border-brand/40'
                 }`}
               >
                 <span className="flex items-center justify-between gap-2 font-semibold">
@@ -203,7 +214,8 @@ export function ProfileStep() {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Callout tone="info" className="min-w-64 flex-1">
-          Gotowy plik PDF lub DOCX pobierzesz w zakładce „Wynik”. Kopię roboczą (JSON) możesz zapisać i wczytać na innym komputerze.
+          Gotowy plik PDF lub DOCX pobierzesz w zakładce „Wynik”. Kopię roboczą (JSON) możesz
+          zapisać i wczytać na innym komputerze.
         </Callout>
         <Button variant="danger" onClick={() => setConfirmReset(true)}>
           <RotateCcw className="size-4" /> Zacznij od nowa
@@ -233,7 +245,10 @@ export function ProfileStep() {
           </>
         }
       >
-        <p className="text-sm text-muted">Tej operacji nie można cofnąć. Jeśli chcesz zachować dane, najpierw zapisz kopię w zakładce „Wynik”.</p>
+        <p className="text-sm text-muted">
+          Tej operacji nie można cofnąć. Jeśli chcesz zachować dane, najpierw zapisz kopię w
+          zakładce „Wynik”.
+        </p>
       </Modal>
     </div>
   );

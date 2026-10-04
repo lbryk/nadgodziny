@@ -13,7 +13,13 @@ let app: FastifyInstance;
 let store: Store;
 
 const env = (extra: Record<string, string> = {}) =>
-  loadConfig({ NODE_ENV: 'test', DATA_DIR: dir, ADMIN_PASSWORD: 'correct-horse-battery', WEB_DIST: path.join(dir, 'none'), ...extra });
+  loadConfig({
+    NODE_ENV: 'test',
+    DATA_DIR: dir,
+    ADMIN_PASSWORD: 'correct-horse-battery',
+    WEB_DIST: path.join(dir, 'none'),
+    ...extra,
+  });
 
 async function start(extra: Record<string, string> = {}) {
   store = await Store.open(dir);
@@ -21,7 +27,11 @@ async function start(extra: Record<string, string> = {}) {
 }
 
 async function login(password = 'correct-horse-battery', username = 'admin') {
-  const res = await app.inject({ method: 'POST', url: '/api/admin/login', payload: { username, password } });
+  const res = await app.inject({
+    method: 'POST',
+    url: '/api/admin/login',
+    payload: { username, password },
+  });
   const cookie = res.cookies.find((c) => c.name === 'nadgodziny_admin');
   return { res, cookie: cookie ? `${cookie.name}=${cookie.value}` : '' };
 }
@@ -54,7 +64,10 @@ describe('public API', () => {
 
   it('answers 304 for an unchanged revision', async () => {
     const first = await app.inject('/api/config');
-    const again = await app.inject({ url: '/api/config', headers: { 'if-none-match': String(first.headers.etag) } });
+    const again = await app.inject({
+      url: '/api/config',
+      headers: { 'if-none-match': String(first.headers.etag) },
+    });
     expect(again.statusCode).toBe(304);
   });
 
@@ -94,7 +107,9 @@ describe('admin authentication', () => {
 
   it('knows the session after login and forgets it after logout', async () => {
     const { cookie } = await login();
-    expect((await app.inject({ url: '/api/admin/session', headers: { cookie } })).json()).toEqual({ user: 'admin' });
+    expect((await app.inject({ url: '/api/admin/session', headers: { cookie } })).json()).toEqual({
+      user: 'admin',
+    });
     const out = await app.inject({ method: 'POST', url: '/api/admin/logout', headers: { cookie } });
     expect(out.cookies[0]?.value).toBe('');
   });
@@ -121,8 +136,17 @@ describe('admin changes', () => {
   it('updates settings and bumps the revision', async () => {
     const { cookie } = await login();
     const before = (await app.inject('/api/config')).json().revision;
-    const settings = { ...DEFAULT_SETTINGS, weeksPerMonth: 4.2, weights: { ...DEFAULT_SETTINGS.weights, k34: 0.91 } };
-    const res = await app.inject({ method: 'PUT', url: '/api/admin/settings', headers: { cookie }, payload: settings });
+    const settings = {
+      ...DEFAULT_SETTINGS,
+      weeksPerMonth: 4.2,
+      weights: { ...DEFAULT_SETTINGS.weights, k34: 0.91 },
+    };
+    const res = await app.inject({
+      method: 'PUT',
+      url: '/api/admin/settings',
+      headers: { cookie },
+      payload: settings,
+    });
     expect(res.statusCode).toBe(200);
     const after = (await app.inject('/api/config')).json();
     expect(after.settings.weights.k34).toBe(0.91);
@@ -183,17 +207,23 @@ describe('admin changes', () => {
   it('changes the password and invalidates the old one', async () => {
     const { cookie } = await login();
     const bad = await app.inject({
-      method: 'POST', url: '/api/admin/password', headers: { cookie },
+      method: 'POST',
+      url: '/api/admin/password',
+      headers: { cookie },
       payload: { current: 'wrong', next: 'a-much-longer-password' },
     });
     expect(bad.statusCode).toBe(403);
     const short = await app.inject({
-      method: 'POST', url: '/api/admin/password', headers: { cookie },
+      method: 'POST',
+      url: '/api/admin/password',
+      headers: { cookie },
       payload: { current: 'correct-horse-battery', next: 'short' },
     });
     expect(short.statusCode).toBe(400);
     const ok = await app.inject({
-      method: 'POST', url: '/api/admin/password', headers: { cookie },
+      method: 'POST',
+      url: '/api/admin/password',
+      headers: { cookie },
       payload: { current: 'correct-horse-battery', next: 'a-much-longer-password' },
     });
     expect(ok.statusCode).toBe(200);
@@ -206,16 +236,22 @@ describe('persistence', () => {
   it('keeps settings, days and password across a restart', async () => {
     const { cookie } = await login();
     await app.inject({
-      method: 'PUT', url: '/api/admin/calendar', headers: { cookie },
+      method: 'PUT',
+      url: '/api/admin/calendar',
+      headers: { cookie },
       payload: { customDays: [{ date: '2026-11-02', kind: 'director' }] },
     });
     await app.inject({
-      method: 'POST', url: '/api/admin/password', headers: { cookie },
+      method: 'POST',
+      url: '/api/admin/password',
+      headers: { cookie },
       payload: { current: 'correct-horse-battery', next: 'persisted-password-1' },
     });
     await app.close();
     await start({ ADMIN_PASSWORD: 'something-else-entirely' }); // ignored: password was changed in the UI
-    expect((await app.inject('/api/config')).json().customDays).toEqual([{ date: '2026-11-02', kind: 'director' }]);
+    expect((await app.inject('/api/config')).json().customDays).toEqual([
+      { date: '2026-11-02', kind: 'director' },
+    ]);
     expect((await login('persisted-password-1')).res.statusCode).toBe(200);
     const raw = JSON.parse(await readFile(path.join(dir, 'store.json'), 'utf8'));
     expect(raw.admin.passwordHash.startsWith('scrypt$')).toBe(true);

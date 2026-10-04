@@ -5,7 +5,8 @@ export type ThemePreference = 'light' | 'dark' | 'system';
 const KEY = 'nadgodziny:theme';
 
 function resolve(pref: ThemePreference): 'light' | 'dark' {
-  if (pref === 'system') return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  if (pref === 'system')
+    return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   return pref;
 }
 

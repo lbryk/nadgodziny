@@ -76,7 +76,8 @@ const DayCell = memo(function DayCell({
 
   if (!isEditableKind(kind)) {
     const bg = KIND_VAR[kind];
-    const title = kind === 'void' ? '' : `${formatDM(date)} — ${label ?? DAY_KIND_LABEL[kind as DayKind]}`;
+    const title =
+      kind === 'void' ? '' : `${formatDM(date)} — ${label ?? DAY_KIND_LABEL[kind as DayKind]}`;
     return (
       <td className="p-0.5">
         <Tip content={title}>
@@ -234,13 +235,23 @@ export default function WeeklyTableStep() {
         <CardBody className="grid gap-5 lg:grid-cols-[1fr_auto]">
           <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <Metric label="Tygodnie z zajęciami" value={`${fmt(v2.weeks)}`} />
-            <Metric label="Roczny obowiązek" value={`${fmt(v2.annualObligation)} godz.`} hint={`${fmt(result.pensum)} × ${fmt(v2.weeks)}`} />
+            <Metric
+              label="Roczny obowiązek"
+              value={`${fmt(v2.annualObligation)} godz.`}
+              hint={`${fmt(result.pensum)} × ${fmt(v2.weeks)}`}
+            />
             <Metric label="Twoje godziny" value={`${fmt(v2.annualHours)} godz.`} />
             <Metric
               label="Pensum uśrednione"
               value={v2.averagedPensum === null ? '—' : `${fmt2(v2.averagedPensum)} godz./tydz.`}
               accent
-              hint={v2.averagedPensumSource === 'manual' ? 'ustawione ręcznie' : v2.averagedPensum === null ? 'brak nadwyżki w roku' : 'liczone automatycznie'}
+              hint={
+                v2.averagedPensumSource === 'manual'
+                  ? 'ustawione ręcznie'
+                  : v2.averagedPensum === null
+                    ? 'brak nadwyżki w roku'
+                    : 'liczone automatycznie'
+              }
             />
           </dl>
           <div className="flex min-w-60 flex-col gap-2 lg:items-end">
@@ -268,7 +279,11 @@ export default function WeeklyTableStep() {
         </CardBody>
       </Card>
 
-      <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+      <Card
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+      >
         <CardHeader
           title={`Tabela rozliczenia godzin zajęć dydaktycznych ${calendar.label}`}
           description="Godziny wypełniły się z Twojego przydziału (po odjęciu klas 5 po 30 kwietnia, praktyk i wydarzeń). Kliknij komórkę, aby wpisać własną wartość — np. 3 albo 3+1 (3 godz. i 1 indywidualna)."
@@ -282,7 +297,8 @@ export default function WeeklyTableStep() {
                 toast.success('Przywrócono wartości z przydziału.');
               }}
             >
-              <RotateCcw className="size-3.5" /> Cofnij ręczne zmiany{overrideCount > 0 && ` (${overrideCount})`}
+              <RotateCcw className="size-3.5" /> Cofnij ręczne zmiany
+              {overrideCount > 0 && ` (${overrideCount})`}
             </Button>
           }
         />
@@ -293,7 +309,9 @@ export default function WeeklyTableStep() {
             <table className="w-full min-w-[820px] border-separate border-spacing-0 text-sm">
               <thead>
                 <tr className="text-xs text-muted">
-                  <th className="sticky left-0 z-10 bg-surface py-2 pr-2 text-left font-medium">Tydzień</th>
+                  <th className="sticky left-0 z-10 bg-surface py-2 pr-2 text-left font-medium">
+                    Tydzień
+                  </th>
                   {WEEKDAY_SHORT_PL.map((d) => (
                     <th key={d} className="w-[9%] min-w-11 py-2 font-medium">
                       {d}
@@ -310,7 +328,9 @@ export default function WeeklyTableStep() {
                   <tr>
                     <td colSpan={10} className="pt-5 pb-1.5">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-base font-semibold tracking-tight">{month.label}</span>
+                        <span className="text-base font-semibold tracking-tight">
+                          {month.label}
+                        </span>
                         <Badge>{calendar.months[mi]!.workdays} dni roboczych</Badge>
                         <Badge tone="brand">{calendar.months[mi]!.teachingDays} dni zajęć</Badge>
                       </div>
@@ -329,7 +349,22 @@ export default function WeeklyTableStep() {
                         </td>
                         {rc.row.cells.map((cell, c) => {
                           if (!cell.date) {
-                            return <DayCell key={c} date="" kind="void" text="" individual={false} overridden={false} excluded={false} eventTitles="" dropped="" coords="" onCommit={commit} onReset={reset} />;
+                            return (
+                              <DayCell
+                                key={c}
+                                date=""
+                                kind="void"
+                                text=""
+                                individual={false}
+                                overridden={false}
+                                excluded={false}
+                                eventTitles=""
+                                dropped=""
+                                coords=""
+                                onCommit={commit}
+                                onReset={reset}
+                              />
+                            );
                           }
                           const day = result.days[cell.date] ?? null;
                           return (
@@ -342,16 +377,25 @@ export default function WeeklyTableStep() {
                               individual={!!day && day.individual > 0 && day.regular === 0}
                               overridden={!!day?.overridden}
                               excluded={!!day?.examExcluded}
-                              eventTitles={(day?.eventIds ?? []).map((id) => eventTitleById.get(id) ?? '').filter(Boolean).join(', ')}
-                              dropped={(day?.droppedGroups ?? []).map((g) => GROUP_LABEL[g]).join(', ')}
+                              eventTitles={(day?.eventIds ?? [])
+                                .map((id) => eventTitleById.get(id) ?? '')
+                                .filter(Boolean)
+                                .join(', ')}
+                              dropped={(day?.droppedGroups ?? [])
+                                .map((g) => GROUP_LABEL[g])
+                                .join(', ')}
                               coords={`${r}:${c}`}
                               onCommit={commit}
                               onReset={reset}
                             />
                           );
                         })}
-                        <td className="num px-2 text-right font-medium">{dead ? '' : fmt(rc.hours)}</td>
-                        <td className="num px-2 text-right text-muted">{dead ? '' : fmt2(rc.pensum)}</td>
+                        <td className="num px-2 text-right font-medium">
+                          {dead ? '' : fmt(rc.hours)}
+                        </td>
+                        <td className="num px-2 text-right text-muted">
+                          {dead ? '' : fmt2(rc.pensum)}
+                        </td>
                         <td className="px-1.5 text-right">
                           {!dead && (
                             <span
@@ -373,7 +417,8 @@ export default function WeeklyTableStep() {
                                 className="grid size-7 place-items-center rounded-md text-muted hover:bg-surface-2 hover:text-ink"
                                 onClick={() => {
                                   for (const d of dates) {
-                                    if (isEditableKind(calendar.days[d]?.kind ?? 'outside')) setOverride(d, '0');
+                                    if (isEditableKind(calendar.days[d]?.kind ?? 'outside'))
+                                      setOverride(d, '0');
                                   }
                                 }}
                               >
@@ -401,8 +446,12 @@ export default function WeeklyTableStep() {
                     <td colSpan={6} className="pt-1.5 pb-1 text-right text-xs text-muted">
                       Razem w miesiącu
                     </td>
-                    <td className="num px-2 pt-1.5 text-right text-sm font-semibold">{fmt(month.hours)}</td>
-                    <td className="num px-2 pt-1.5 text-right text-sm text-muted">{fmt2(month.pensum)}</td>
+                    <td className="num px-2 pt-1.5 text-right text-sm font-semibold">
+                      {fmt(month.hours)}
+                    </td>
+                    <td className="num px-2 pt-1.5 text-right text-sm text-muted">
+                      {fmt2(month.pensum)}
+                    </td>
                     <td className="px-1.5 pt-1.5 text-right">
                       <motion.span
                         key={month.overtime}
@@ -410,10 +459,13 @@ export default function WeeklyTableStep() {
                         animate={{ scale: 1, opacity: 1 }}
                         className={cn(
                           'num inline-flex items-baseline gap-1 rounded-lg px-2.5 py-1 text-sm font-semibold',
-                          month.overtime > 0 ? 'bg-brand text-white dark:text-[#0b0e1a]' : 'bg-surface-2 text-muted',
+                          month.overtime > 0
+                            ? 'bg-brand text-white dark:text-[#0b0e1a]'
+                            : 'bg-surface-2 text-muted',
                         )}
                       >
-                        {month.overtime} <span className="text-[10px] font-medium opacity-80">godz.</span>
+                        {month.overtime}{' '}
+                        <span className="text-[10px] font-medium opacity-80">godz.</span>
                       </motion.span>
                     </td>
                     <td />
@@ -429,18 +481,23 @@ export default function WeeklyTableStep() {
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-brand-soft p-4">
-            <p className="text-sm text-muted">Nadgodziny w całym roku szkolnym (wariant 2, sumy miesięcy w pełnych godzinach)</p>
+            <p className="text-sm text-muted">
+              Nadgodziny w całym roku szkolnym (wariant 2, sumy miesięcy w pełnych godzinach)
+            </p>
             <p className="flex items-baseline gap-2">
-              <CountUp value={v2.total} className="num text-3xl font-semibold tracking-tight text-brand" />
+              <CountUp
+                value={v2.total}
+                className="num text-3xl font-semibold tracking-tight text-brand"
+              />
               <span className="text-muted">godz.</span>
             </p>
           </div>
 
           <Callout title="Praktyki i godziny, które znikają">
-            Godziny, które znikną z powodu praktyk uczniowskich, trzeba wypracować wcześniej, żeby w miesiącu z
-            praktyką mieć zapłaconą podstawę i/lub ewentualne nadgodziny — właśnie dlatego pensum uśrednione bywa
-            wyższe niż 18. Dodaj praktyki w zakładce „Wydarzenia”. Dni egzaminów (żółte) są niepłatne i nie
-            wchodzą do rozliczenia.
+            Godziny, które znikną z powodu praktyk uczniowskich, trzeba wypracować wcześniej, żeby w
+            miesiącu z praktyką mieć zapłaconą podstawę i/lub ewentualne nadgodziny — właśnie
+            dlatego pensum uśrednione bywa wyższe niż 18. Dodaj praktyki w zakładce „Wydarzenia”.
+            Dni egzaminów (żółte) są niepłatne i nie wchodzą do rozliczenia.
           </Callout>
         </CardBody>
       </Card>
@@ -448,9 +505,24 @@ export default function WeeklyTableStep() {
   );
 }
 
-function Metric({ label, value, hint, accent }: { label: string; value: string; hint?: string; accent?: boolean }) {
+function Metric({
+  label,
+  value,
+  hint,
+  accent,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+  accent?: boolean;
+}) {
   return (
-    <div className={cn('rounded-2xl border p-3.5', accent ? 'border-brand/30 bg-brand-soft' : 'border-line bg-surface-2/60')}>
+    <div
+      className={cn(
+        'rounded-2xl border p-3.5',
+        accent ? 'border-brand/30 bg-brand-soft' : 'border-line bg-surface-2/60',
+      )}
+    >
       <dt className="text-xs text-muted">{label}</dt>
       <dd className="num mt-1 text-lg font-semibold tracking-tight">{value}</dd>
       {hint && <p className="mt-0.5 text-[11px] text-muted">{hint}</p>}
@@ -460,7 +532,10 @@ function Metric({ label, value, hint, accent }: { label: string; value: string; 
 
 function Legend() {
   const items: { label: string; style: React.CSSProperties; hatch?: boolean }[] = [
-    { label: 'Dzień zajęć', style: { backgroundColor: 'var(--surface)', border: '1px solid var(--line)' } },
+    {
+      label: 'Dzień zajęć',
+      style: { backgroundColor: 'var(--surface)', border: '1px solid var(--line)' },
+    },
     { label: 'Święto / przerwa', style: { backgroundColor: 'var(--k-holiday)' }, hatch: true },
     { label: 'Ferie', style: { backgroundColor: 'var(--k-ferie)' }, hatch: true },
     { label: 'Dzień wolny / DEN', style: { backgroundColor: 'var(--k-den)' }, hatch: true },

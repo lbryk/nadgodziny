@@ -4,7 +4,16 @@ import type { CustomDay, Settings, TeacherPlan } from './types';
 
 export const isoDateSchema = z.string().refine(isValidISO, 'Niepoprawna data (RRRR-MM-DD)');
 
-const kindSchema = z.enum(['school', 'holiday', 'break', 'ferie', 'den', 'director', 'exam', 'other']);
+const kindSchema = z.enum([
+  'school',
+  'holiday',
+  'break',
+  'ferie',
+  'den',
+  'director',
+  'exam',
+  'other',
+]);
 
 export const customDaySchema = z.object({
   date: isoDateSchema,

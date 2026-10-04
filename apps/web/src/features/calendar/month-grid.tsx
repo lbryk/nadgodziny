@@ -1,4 +1,11 @@
-import { WEEKDAY_SHORT_PL, addDays, weekdayOf, type Calendar, type DayKind, type MonthInfo } from '@nadgodziny/core';
+import {
+  WEEKDAY_SHORT_PL,
+  addDays,
+  weekdayOf,
+  type Calendar,
+  type DayKind,
+  type MonthInfo,
+} from '@nadgodziny/core';
 import { cn } from '../../lib/cn';
 
 export const KIND_BG: Record<DayKind, string> = {
@@ -71,7 +78,9 @@ export function MonthGrid({
               )}
             >
               {Number(date.slice(8))}
-              {off && kind !== 'outside' && !weekend && <span className="hatch absolute inset-0 rounded-lg" />}
+              {off && kind !== 'outside' && !weekend && (
+                <span className="hatch absolute inset-0 rounded-lg" />
+              )}
             </button>
           );
         })}

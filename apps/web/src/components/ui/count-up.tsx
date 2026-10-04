@@ -16,7 +16,9 @@ export function CountUp({
 }) {
   const reduce = useReducedMotion();
   const mv = useMotionValue(value);
-  const text = useTransform(mv, (v) => (decimals > 0 ? fmt(Number(v.toFixed(decimals))) : fmt(Math.round(v))));
+  const text = useTransform(mv, (v) =>
+    decimals > 0 ? fmt(Number(v.toFixed(decimals))) : fmt(Math.round(v)),
+  );
 
   useEffect(() => {
     if (reduce) {

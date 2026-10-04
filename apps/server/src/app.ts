@@ -25,7 +25,10 @@ const COOKIE_NAME = 'nadgodziny_admin';
 const DUMMY_HASH =
   'scrypt$32768$8$1$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
-const loginBody = z.object({ username: z.string().min(1).max(100), password: z.string().min(1).max(200) });
+const loginBody = z.object({
+  username: z.string().min(1).max(100),
+  password: z.string().min(1).max(200),
+});
 const passwordBody = z.object({
   current: z.string().min(1).max(200),
   next: z.string().min(10, 'Hasło musi mieć co najmniej 10 znaków.').max(200),
@@ -159,33 +162,45 @@ export async function buildApp({ config, store }: BuildAppOptions): Promise<Fast
 
   app.put('/api/admin/settings', { preHandler: requireAdmin }, async (request, reply) => {
     const parsed = settingsSchema.safeParse(request.body);
-    if (!parsed.success) return reply.code(400).send({ error: 'Niepoprawne ustawienia.', issues: parsed.error.issues });
+    if (!parsed.success)
+      return reply
+        .code(400)
+        .send({ error: 'Niepoprawne ustawienia.', issues: parsed.error.issues });
     await store.update((s) => void (s.settings = parsed.data));
     return store.publicConfig;
   });
 
   app.put('/api/admin/calendar', { preHandler: requireAdmin }, async (request, reply) => {
     const parsed = calendarBody.safeParse(request.body);
-    if (!parsed.success) return reply.code(400).send({ error: 'Niepoprawny kalendarz.', issues: parsed.error.issues });
+    if (!parsed.success)
+      return reply.code(400).send({ error: 'Niepoprawny kalendarz.', issues: parsed.error.issues });
     const byDate = new Map(parsed.data.customDays.map((d) => [d.date, d]));
     const days = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
     await store.update((s) => void (s.customDays = days));
     return store.publicConfig;
   });
 
-  app.post('/api/admin/password', { preHandler: requireAdmin, config: { rateLimit: { max: 5, timeWindow: '1 minute' } } }, async (request, reply) => {
-    const body = passwordBody.safeParse(request.body);
-    if (!body.success) {
-      return reply.code(400).send({ error: body.error.issues[0]?.message ?? 'Niepoprawne dane.' });
-    }
-    const admin = store.snapshot.admin;
-    if (!admin || !(await verifyPassword(body.data.current, admin.passwordHash))) {
-      return reply.code(403).send({ error: 'Aktualne hasło jest nieprawidłowe.' });
-    }
-    const passwordHash = await hashPassword(body.data.next);
-    await store.update((s) => void (s.admin = { user: admin.user, passwordHash, source: 'ui' }), { bump: false });
-    return { ok: true };
-  });
+  app.post(
+    '/api/admin/password',
+    { preHandler: requireAdmin, config: { rateLimit: { max: 5, timeWindow: '1 minute' } } },
+    async (request, reply) => {
+      const body = passwordBody.safeParse(request.body);
+      if (!body.success) {
+        return reply
+          .code(400)
+          .send({ error: body.error.issues[0]?.message ?? 'Niepoprawne dane.' });
+      }
+      const admin = store.snapshot.admin;
+      if (!admin || !(await verifyPassword(body.data.current, admin.passwordHash))) {
+        return reply.code(403).send({ error: 'Aktualne hasło jest nieprawidłowe.' });
+      }
+      const passwordHash = await hashPassword(body.data.next);
+      await store.update((s) => void (s.admin = { user: admin.user, passwordHash, source: 'ui' }), {
+        bump: false,
+      });
+      return { ok: true };
+    },
+  );
 
   app.get('/api/admin/backup', { preHandler: requireAdmin }, async (_request, reply) => {
     const { settings, customDays } = store.publicConfig;
@@ -195,7 +210,8 @@ export async function buildApp({ config, store }: BuildAppOptions): Promise<Fast
 
   app.post('/api/admin/restore', { preHandler: requireAdmin }, async (request, reply) => {
     const parsed = backupBody.safeParse(request.body);
-    if (!parsed.success) return reply.code(400).send({ error: 'Plik kopii zapasowej jest niepoprawny.' });
+    if (!parsed.success)
+      return reply.code(400).send({ error: 'Plik kopii zapasowej jest niepoprawny.' });
     await store.update((s) => {
       s.settings = parsed.data.settings;
       s.customDays = parsed.data.customDays;
@@ -208,7 +224,10 @@ export async function buildApp({ config, store }: BuildAppOptions): Promise<Fast
     reply
       .header('Content-Type', 'application/xml; charset=utf-8')
       .header('Content-Disposition', 'attachment; filename="kalendarz.xml"');
-    return buildCalendarXml(customDays, `${settings.schoolYearStart}/${settings.schoolYearStart + 1}`);
+    return buildCalendarXml(
+      customDays,
+      `${settings.schoolYearStart}/${settings.schoolYearStart + 1}`,
+    );
   });
 
   /* --- Static web client ---------------------------------------------------------------- */
@@ -220,7 +239,10 @@ export async function buildApp({ config, store }: BuildAppOptions): Promise<Fast
       wildcard: false,
       setHeaders(reply, filePath) {
         // Hashed build assets can be cached forever; everything else must revalidate.
-        if (filePath.includes(`${path.sep}assets${path.sep}`) || filePath.includes(`${path.sep}tesseract${path.sep}`)) {
+        if (
+          filePath.includes(`${path.sep}assets${path.sep}`) ||
+          filePath.includes(`${path.sep}tesseract${path.sep}`)
+        ) {
           reply.header('Cache-Control', 'public, max-age=31536000, immutable');
         } else {
           reply.header('Cache-Control', 'no-cache');
@@ -228,7 +250,11 @@ export async function buildApp({ config, store }: BuildAppOptions): Promise<Fast
       },
     });
     app.setNotFoundHandler(async (request, reply) => {
-      if (request.method === 'GET' && !request.url.startsWith('/api/') && request.headers.accept?.includes('text/html')) {
+      if (
+        request.method === 'GET' &&
+        !request.url.startsWith('/api/') &&
+        request.headers.accept?.includes('text/html')
+      ) {
         return reply.header('Cache-Control', 'no-cache').sendFile('index.html');
       }
       return reply.code(404).send({ error: 'Nie znaleziono.' });
@@ -259,7 +285,12 @@ async function ensureAdmin(config: Config, store: Store, app: FastifyInstance): 
     }
     const passwordHash = await hashPassword(password);
     await store.update(
-      (s) => void (s.admin = { user: config.ADMIN_USER, passwordHash, source: envPassword ? 'env' : 'ui' }),
+      (s) =>
+        void (s.admin = {
+          user: config.ADMIN_USER,
+          passwordHash,
+          source: envPassword ? 'env' : 'ui',
+        }),
       { bump: false },
     );
     if (generated) {
@@ -277,9 +308,12 @@ async function ensureAdmin(config: Config, store: Store, app: FastifyInstance): 
   const userChanged = current.user !== config.ADMIN_USER && current.source === 'env';
   if (followEnv && (userChanged || !(await verifyPassword(envPassword, current.passwordHash)))) {
     const passwordHash = await hashPassword(envPassword);
-    await store.update((s) => void (s.admin = { user: config.ADMIN_USER, passwordHash, source: 'env' }), {
-      bump: false,
-    });
+    await store.update(
+      (s) => void (s.admin = { user: config.ADMIN_USER, passwordHash, source: 'env' }),
+      {
+        bump: false,
+      },
+    );
     app.log.info('Administrator credentials were refreshed from the environment.');
   }
 }

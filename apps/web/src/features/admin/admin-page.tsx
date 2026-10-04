@@ -76,7 +76,11 @@ export default function AdminPage() {
               )}
             >
               {tab === id && (
-                <motion.span layoutId="admin-pill" className="absolute inset-0 rounded-xl bg-surface shadow-card ring-1 ring-line" transition={{ type: 'spring', stiffness: 400, damping: 34 }} />
+                <motion.span
+                  layoutId="admin-pill"
+                  className="absolute inset-0 rounded-xl bg-surface shadow-card ring-1 ring-line"
+                  transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                />
               )}
               <Icon className="relative z-10 size-4" />
               <span className="relative z-10">{label}</span>
@@ -86,7 +90,13 @@ export default function AdminPage() {
       </LayoutGroup>
 
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={tab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
+        <motion.div
+          key={tab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+        >
           <Suspense fallback={<Spinner className="mx-auto my-16 size-6" />}>
             {tab === 'ustawienia' && <SettingsPanel key={config.revision} />}
             {tab === 'kalendarz' && <CalendarPanel key={config.revision} />}

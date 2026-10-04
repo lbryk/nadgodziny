@@ -40,13 +40,26 @@ export function V1Steps({
   ];
 
   return (
-    <dl className={cn('divide-y divide-line rounded-xl border border-line bg-surface-2/50 text-sm', className)}>
+    <dl
+      className={cn(
+        'divide-y divide-line rounded-xl border border-line bg-surface-2/50 text-sm',
+        className,
+      )}
+    >
       {rows.map((r) => (
-        <div key={r.label} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 px-3.5 py-2.5">
+        <div
+          key={r.label}
+          className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 px-3.5 py-2.5"
+        >
           <dt className="text-muted">{r.label}</dt>
           <dd className="num flex items-baseline gap-3">
             <span className="font-mono text-xs text-muted">{r.math}</span>
-            <span className={cn('min-w-16 text-right', r.strong ? 'text-base font-semibold text-brand' : 'font-medium')}>
+            <span
+              className={cn(
+                'min-w-16 text-right',
+                r.strong ? 'text-base font-semibold text-brand' : 'font-medium',
+              )}
+            >
               {r.result}
             </span>
           </dd>
@@ -54,7 +67,8 @@ export function V1Steps({
       ))}
       {v1.weeklyShortfall > 0 && (
         <div className="px-3.5 py-2.5 text-[13px] text-warn">
-          Przydział ważony jest o {fmt2(v1.weeklyShortfall)} godz. niższy niż wymiar — nadgodzin brak.
+          Przydział ważony jest o {fmt2(v1.weeklyShortfall)} godz. niższy niż wymiar — nadgodzin
+          brak.
         </div>
       )}
     </dl>

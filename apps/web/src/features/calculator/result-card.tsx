@@ -15,7 +15,8 @@ export function ResultCard({ onOpenResult }: { onOpenResult: () => void }) {
   const { selected } = result;
   const monthly = result.months.map((m) => (plan.variant === 1 ? m.v1.overtime : m.v2.overtime));
   const peak = Math.max(1, ...monthly);
-  const hasHours = result.v1.hours.k12 + result.v1.hours.k34 + result.v1.hours.k5 + result.v1.hours.individual > 0;
+  const hasHours =
+    result.v1.hours.k12 + result.v1.hours.k34 + result.v1.hours.k5 + result.v1.hours.individual > 0;
   const averaged = plan.variant === 2 ? result.v2.averagedPensum : null;
 
   return (
@@ -40,7 +41,11 @@ export function ResultCard({ onOpenResult }: { onOpenResult: () => void }) {
             value={plan.variant}
             onChange={(variant) => patch({ variant })}
             options={[
-              { value: 1, label: 'Wariant 1', hint: 'Uśredniony — jednakowa liczba godzin co miesiąc' },
+              {
+                value: 1,
+                label: 'Wariant 1',
+                hint: 'Uśredniony — jednakowa liczba godzin co miesiąc',
+              },
               { value: 2, label: 'Wariant 2', hint: 'Realny — wg faktycznych godzin w tygodniach' },
             ]}
           />
@@ -49,18 +54,25 @@ export function ResultCard({ onOpenResult }: { onOpenResult: () => void }) {
         <div>
           <p className="text-xs text-muted">Nadgodziny do wypłaty w roku szkolnym</p>
           <p className="mt-1 flex items-baseline gap-2">
-            <CountUp value={selected.overtimeTotal} className="num text-5xl font-semibold tracking-tight" />
+            <CountUp
+              value={selected.overtimeTotal}
+              className="num text-5xl font-semibold tracking-tight"
+            />
             <span className="text-lg text-muted">{hoursWord(selected.overtimeTotal)}</span>
           </p>
           {selected.extrasTotal > 0 && (
             <p className="mt-1.5 text-sm text-muted">
-              + <span className="num font-medium text-ink">{fmt(selected.extrasTotal)}</span> godz. rozliczanych
-              odrębnie
+              + <span className="num font-medium text-ink">{fmt(selected.extrasTotal)}</span> godz.
+              rozliczanych odrębnie
             </p>
           )}
           {plan.hourlyRate ? (
             <p className="mt-1 text-sm text-muted">
-              Szacunkowo: <span className="num font-medium text-ink">{fmtPln(selected.grandTotal * plan.hourlyRate)}</span> brutto
+              Szacunkowo:{' '}
+              <span className="num font-medium text-ink">
+                {fmtPln(selected.grandTotal * plan.hourlyRate)}
+              </span>{' '}
+              brutto
             </p>
           ) : null}
         </div>
@@ -72,7 +84,10 @@ export function ResultCard({ onOpenResult }: { onOpenResult: () => void }) {
                 key={result.months[i]!.monthKey}
                 className="flex-1 rounded-t-md bg-gradient-to-t from-brand/70 to-accent/80"
                 initial={false}
-                animate={{ height: `${Math.max(4, (value / peak) * 100)}%`, opacity: value > 0 ? 1 : 0.35 }}
+                animate={{
+                  height: `${Math.max(4, (value / peak) * 100)}%`,
+                  opacity: value > 0 ? 1 : 0.35,
+                }}
                 transition={{ type: 'spring', stiffness: 220, damping: 26, delay: i * 0.015 }}
                 title={`${result.months[i]!.label}: ${value} godz.`}
               />
@@ -89,7 +104,10 @@ export function ResultCard({ onOpenResult }: { onOpenResult: () => void }) {
           {plan.variant === 1 ? (
             <Stat label="Godziny ważone" value={fmt2(result.v1.weightedHours)} />
           ) : (
-            <Stat label="Pensum uśrednione" value={averaged === null ? '—' : `${fmt2(averaged)} godz.`} />
+            <Stat
+              label="Pensum uśrednione"
+              value={averaged === null ? '—' : `${fmt2(averaged)} godz.`}
+            />
           )}
           <Stat
             label={plan.variant === 1 ? 'Miesięcznie' : 'Przeciętnie / mies.'}

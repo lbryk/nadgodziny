@@ -104,7 +104,11 @@ describe('text (OCR) extraction', () => {
   it('reads full dates', () => {
     const { days } = extractDaysFromText('14.10.2026 - Dzień Edukacji Narodowej', opts);
     expect(days).toHaveLength(1);
-    expect(days[0]).toMatchObject({ date: '2026-10-14', kind: 'den', label: 'Dzień Edukacji Narodowej' });
+    expect(days[0]).toMatchObject({
+      date: '2026-10-14',
+      kind: 'den',
+      label: 'Dzień Edukacji Narodowej',
+    });
   });
 
   it('uses what is left of the line as the label', () => {
@@ -131,7 +135,11 @@ describe('text (OCR) extraction', () => {
 
   it('reads Polish month names', () => {
     const { days } = extractDaysFromText(
-      ['14 października - Dzień Edukacji Narodowej', 'Wiosenna przerwa świąteczna 25 marca - 30 marca 2027', 'Ferie: 18-31 stycznia 2027'].join('\n'),
+      [
+        '14 października - Dzień Edukacji Narodowej',
+        'Wiosenna przerwa świąteczna 25 marca - 30 marca 2027',
+        'Ferie: 18-31 stycznia 2027',
+      ].join('\n'),
       opts,
     );
     const dates = days.map((d) => d.date);

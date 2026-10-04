@@ -7,7 +7,9 @@ const store = await Store.open(config.dataDir);
 const app = await buildApp({ config, store });
 
 if (config.NODE_ENV === 'production' && !config.COOKIE_SECURE) {
-  app.log.warn('COOKIE_SECURE is off. Enable it (COOKIE_SECURE=1) once the site is served over HTTPS.');
+  app.log.warn(
+    'COOKIE_SECURE is off. Enable it (COOKIE_SECURE=1) once the site is served over HTTPS.',
+  );
 }
 
 const shutdown = async (signal: string) => {

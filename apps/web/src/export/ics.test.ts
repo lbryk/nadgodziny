@@ -1,4 +1,9 @@
-import { DEFAULT_CUSTOM_DAYS, DEFAULT_SETTINGS, buildCalendar, parseCalendarIcs } from '@nadgodziny/core';
+import {
+  DEFAULT_CUSTOM_DAYS,
+  DEFAULT_SETTINGS,
+  buildCalendar,
+  parseCalendarIcs,
+} from '@nadgodziny/core';
 import { describe, expect, it } from 'vitest';
 import { buildCalendarIcs } from './ics';
 

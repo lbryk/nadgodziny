@@ -166,7 +166,15 @@ export function buildReport(
     const f = (n: number) => (n ? fmt(n) : '—');
     return {
       label: m.label,
-      cells: [f(overtime), f(e.substitutions), f(e.individual), f(e.trips), f(e.exams), f(e.other), fmt(total)],
+      cells: [
+        f(overtime),
+        f(e.substitutions),
+        f(e.individual),
+        f(e.trips),
+        f(e.exams),
+        f(e.other),
+        fmt(total),
+      ],
     };
   });
   const monthlyTotal = [
@@ -186,8 +194,16 @@ export function buildReport(
     v1.hours.k5 > 0 && `${fmt(v1.hours.k5)}×${fmt(w.k5)}`,
   ].filter(Boolean);
   const v1Steps = [
-    { label: 'Godziny ważone (nauczycielskie)', math: terms.join(' + ') || '—', result: fmt2(v1.weightedHours) },
-    { label: 'Nadgodziny tygodniowo', math: `${fmt2(v1.weightedHours)} − ${fmt(v1.pensum)}`, result: `${fmt2(v1.weeklyOvertime)} godz.` },
+    {
+      label: 'Godziny ważone (nauczycielskie)',
+      math: terms.join(' + ') || '—',
+      result: fmt2(v1.weightedHours),
+    },
+    {
+      label: 'Nadgodziny tygodniowo',
+      math: `${fmt2(v1.weightedHours)} − ${fmt(v1.pensum)}`,
+      result: `${fmt2(v1.weeklyOvertime)} godz.`,
+    },
     {
       label: 'Nadgodziny miesięcznie',
       math: `${fmt2(v1.weeklyOvertime)} × ${fmt2(settings.weeksPerMonth)} = ${fmt2(v1.monthlyRaw)}`,
@@ -204,17 +220,29 @@ export function buildReport(
   ];
   if (plan.variant === 1) {
     facts.push({ label: 'Godziny ważone', value: fmt2(v1.weightedHours) });
-    facts.push({ label: 'Nadgodziny miesięcznie (uśrednione)', value: `${v1.monthlyRounded} godz.` });
+    facts.push({
+      label: 'Nadgodziny miesięcznie (uśrednione)',
+      value: `${v1.monthlyRounded} godz.`,
+    });
   } else {
     facts.push({
       label: 'Pensum uśrednione',
       value: v2.averagedPensum === null ? '—' : `${fmt2(v2.averagedPensum)} godz./tydz.`,
     });
-    facts.push({ label: 'Godziny w roku / obowiązek', value: `${fmt(v2.annualHours)} / ${fmt(v2.annualObligation)} godz.` });
+    facts.push({
+      label: 'Godziny w roku / obowiązek',
+      value: `${fmt(v2.annualHours)} / ${fmt(v2.annualObligation)} godz.`,
+    });
   }
-  facts.push({ label: 'Nadgodziny w roku szkolnym', value: `${result.selected.overtimeTotal} godz.` });
+  facts.push({
+    label: 'Nadgodziny w roku szkolnym',
+    value: `${result.selected.overtimeTotal} godz.`,
+  });
   if (result.selected.extrasTotal > 0) {
-    facts.push({ label: 'Rozliczane odrębnie', value: `${fmt(result.selected.extrasTotal)} godz.` });
+    facts.push({
+      label: 'Rozliczane odrębnie',
+      value: `${fmt(result.selected.extrasTotal)} godz.`,
+    });
   }
   if (plan.hourlyRate) {
     facts.push({
@@ -259,7 +287,8 @@ export function buildReport(
     'Księgowość rozlicza PEŁNE miesiące.',
   ];
 
-  const variantLabel = plan.variant === 1 ? 'Wariant 1 — uśredniony' : 'Wariant 2 — według realnego przydziału';
+  const variantLabel =
+    plan.variant === 1 ? 'Wariant 1 — uśredniony' : 'Wariant 2 — według realnego przydziału';
   const name = plan.teacherName.trim();
   const stamp = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
 
@@ -286,7 +315,9 @@ export function buildReport(
       extras: result.selected.extrasTotal,
       text: `${result.selected.overtimeTotal} godz.`,
     },
-    fileBaseName: ['nadgodziny', slug(name) || 'nauczyciel', schoolYear.replace('/', '-')].join('-'),
+    fileBaseName: ['nadgodziny', slug(name) || 'nauczyciel', schoolYear.replace('/', '-')].join(
+      '-',
+    ),
   };
 }
 

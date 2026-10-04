@@ -76,7 +76,11 @@ export function parseCalendarXml(xml: string): ImportResult {
   if (valid !== true) {
     throw new Error(`Niepoprawny plik XML: ${valid.err.msg} (linia ${valid.err.line})`);
   }
-  const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '@_', trimValues: true });
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: '@_',
+    trimValues: true,
+  });
   const tree = parser.parse(xml) as unknown;
   const nodes: { tag: string; node: Node }[] = [];
   collect(tree, nodes);
@@ -84,7 +88,8 @@ export function parseCalendarXml(xml: string): ImportResult {
   const byDate = new Map<ISODate, CustomDay>();
   for (const { tag, node } of nodes) {
     const kind = kindFromAttribute(attr(node, 'typ', 'type', 'rodzaj'), 'other');
-    const label = String(attr(node, 'nazwa', 'name', 'opis') ?? textOf(node) ?? '').trim() || undefined;
+    const label =
+      String(attr(node, 'nazwa', 'name', 'opis') ?? textOf(node) ?? '').trim() || undefined;
     if (DAY_TAGS.has(tag)) {
       const date = normalizeDateString(attr(node, 'data', 'date'));
       if (!date) {
@@ -137,7 +142,11 @@ export function buildCalendarXml(days: CustomDay[], schoolYear?: string): string
     }
     entries.push(
       last === first
-        ? { '@_data': first.date, '@_typ': first.kind, ...(first.label ? { '@_nazwa': first.label } : {}) }
+        ? {
+            '@_data': first.date,
+            '@_typ': first.kind,
+            ...(first.label ? { '@_nazwa': first.label } : {}),
+          }
         : {
             '@_od': first.date,
             '@_do': last.date,
@@ -147,7 +156,11 @@ export function buildCalendarXml(days: CustomDay[], schoolYear?: string): string
     );
     i = j;
   }
-  const builder = new XMLBuilder({ ignoreAttributes: false, attributeNamePrefix: '@_', format: true });
+  const builder = new XMLBuilder({
+    ignoreAttributes: false,
+    attributeNamePrefix: '@_',
+    format: true,
+  });
   const single = entries.filter((e) => '@_data' in e);
   const ranges = entries.filter((e) => '@_od' in e);
   const body = builder.build({

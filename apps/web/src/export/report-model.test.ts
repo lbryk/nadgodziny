@@ -15,13 +15,25 @@ const plan = {
   ...createDefaultPlan(DEFAULT_SETTINGS),
   teacherName: 'Zażółć Gęślą',
   variant: 2 as const,
-  timetable: { ...emptyTimetable(), k12: [2, 2, 2, 2, 2], k34: [2, 2, 2, 2, 2], k5: [1, 1, 1, 1, 1], ind: [1, 0, 0, 0, 0] },
+  timetable: {
+    ...emptyTimetable(),
+    k12: [2, 2, 2, 2, 2],
+    k34: [2, 2, 2, 2, 2],
+    k5: [1, 1, 1, 1, 1],
+    ind: [1, 0, 0, 0, 0],
+  },
   events: [{ ...createEvent('e1', 'trip', '2026-10-20'), paidHours: 8 }],
 };
 
 describe('report model', () => {
   const result = calculate(plan, DEFAULT_SETTINGS, calendar);
-  const report = buildReport(plan, DEFAULT_SETTINGS, calendar, result, new Date('2026-10-05T10:00:00'));
+  const report = buildReport(
+    plan,
+    DEFAULT_SETTINGS,
+    calendar,
+    result,
+    new Date('2026-10-05T10:00:00'),
+  );
 
   it('names files without diacritics', () => {
     expect(report.fileBaseName).toBe('nadgodziny-zazolc-gesla-2026-2027');
@@ -50,7 +62,10 @@ describe('report model', () => {
   });
 
   it('adds up the monthly table to the headline total', () => {
-    const overtimeColumn = report.monthlyLines.reduce((acc, l) => acc + Number(l.cells[0]!.replace('—', '0')), 0);
+    const overtimeColumn = report.monthlyLines.reduce(
+      (acc, l) => acc + Number(l.cells[0]!.replace('—', '0')),
+      0,
+    );
     expect(overtimeColumn).toBe(result.selected.overtimeTotal);
     expect(report.events).toHaveLength(1);
     expect(report.events[0]!.settlement).toContain('8 godz.');

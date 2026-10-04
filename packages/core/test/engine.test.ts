@@ -72,7 +72,11 @@ describe('variant 1 — worked example from the director', () => {
   });
 
   it('weights classes 1-2 as 1, 3-4 as 0.9 and 5 as 0.8', () => {
-    const w = weightedHours({ k12: 10, k34: 10, k5: 5, individual: 0 }, DEFAULT_SETTINGS.weights, false);
+    const w = weightedHours(
+      { k12: 10, k34: 10, k5: 5, individual: 0 },
+      DEFAULT_SETTINGS.weights,
+      false,
+    );
     expect(w.toNumber()).toBe(23); // 10 + 9 + 4
   });
 
@@ -266,7 +270,11 @@ describe('variant 2 — averaged pensum', () => {
   });
 
   it('a partial absence only removes the missed lessons', () => {
-    const ev = { ...createEvent('s1', 'training', '2026-09-09'), lessons: 'partial' as const, hoursPerDay: 2 };
+    const ev = {
+      ...createEvent('s1', 'training', '2026-09-09'),
+      lessons: 'partial' as const,
+      hoursPerDay: 2,
+    };
     const p = plan({
       variant: 2,
       timetable: { ...emptyTimetable(), k12: flat(5) },
@@ -328,7 +336,11 @@ describe('separately settled hours', () => {
     const sub = { ...createEvent('s', 'substitution', '2026-10-06'), paidHours: 3 };
     const trip = { ...createEvent('t', 'trip', '2026-10-20'), paidHours: 8 };
     const exam = { ...createEvent('e', 'exam-oral', '2027-05-12'), paidHours: 5 };
-    const window = { ...createEvent('w', 'substitution', '2026-10-07'), paidHours: 2, settlement: 'free' as const };
+    const window = {
+      ...createEvent('w', 'substitution', '2026-10-07'),
+      paidHours: 2,
+      settlement: 'free' as const,
+    };
     const res = run(plan({ events: [sub, trip, exam, window] }));
     const oct = res.months.find((m) => m.monthKey === '2026-10')!;
     expect(oct.extras.substitutions).toBe(3);

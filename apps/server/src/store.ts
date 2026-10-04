@@ -76,7 +76,7 @@ export class Store {
         await this.persist();
         return;
       }
-      throw new Error(`Cannot read ${this.file}: ${(error as Error).message}`);
+      throw new Error(`Cannot read ${this.file}: ${(error as Error).message}`, { cause: error });
     }
   }
 
@@ -96,7 +96,10 @@ export class Store {
   }
 
   /** Serialised read-modify-write; `bump` increments the public revision (ETag). */
-  update(mutator: (draft: StoreState) => void, options: { bump?: boolean } = {}): Promise<StoreState> {
+  update(
+    mutator: (draft: StoreState) => void,
+    options: { bump?: boolean } = {},
+  ): Promise<StoreState> {
     const run = async () => {
       const draft = structuredClone(this.state);
       mutator(draft);

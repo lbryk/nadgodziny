@@ -40,6 +40,7 @@ describe('school year rules', () => {
  * Cells of the paper table "Tabela rozliczenia godzin zajęć dydaktycznych 2026/2027"
  * (grey = day off, yellow = exam day), read from the PDF supplied by the school.
  */
+// prettier-ignore
 const PDF_GREY = [
   '2026-10-14', '2026-11-11',
   '2026-12-22', '2026-12-23', '2026-12-24', '2026-12-25',
@@ -50,11 +51,13 @@ const PDF_GREY = [
   '2027-03-25', '2027-03-26', '2027-03-29', '2027-03-30',
   '2027-05-03', '2027-05-27', '2027-05-28',
 ];
+// prettier-ignore
 const PDF_YELLOW = [
   '2027-01-12',
   '2027-05-04', '2027-05-05', '2027-05-06', '2027-05-07',
   '2027-06-08', '2027-06-09', '2027-06-25',
 ];
+// prettier-ignore
 const PDF_ROW_STARTS = [
   '2026-09-01', '2026-09-07', '2026-09-14', '2026-09-21', '2026-09-28', '2026-10-01',
   '2026-10-05', '2026-10-12', '2026-10-19', '2026-10-26', '2026-11-02', '2026-11-09',

@@ -44,7 +44,11 @@ export function LoginForm() {
   return (
     <div className="grid min-h-[60vh] place-items-center">
       <motion.div animate={shake} className="w-full max-w-sm">
-        <Card initial={{ opacity: 0, y: 24, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="p-7">
+        <Card
+          initial={{ opacity: 0, y: 24, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          className="p-7"
+        >
           <div className="mb-6 flex flex-col items-center gap-3 text-center">
             <motion.div
               initial={{ rotate: -12, scale: 0.7 }}
@@ -56,17 +60,27 @@ export function LoginForm() {
             </motion.div>
             <div>
               <h1 className="text-xl font-semibold tracking-tight">Panel administratora</h1>
-              <p className="mt-1 text-sm text-muted">Dostęp tylko dla osób zarządzających kalendarzem i ustawieniami.</p>
+              <p className="mt-1 text-sm text-muted">
+                Dostęp tylko dla osób zarządzających kalendarzem i ustawieniami.
+              </p>
             </div>
           </div>
           <form onSubmit={onSubmit} className="space-y-4" noValidate>
             <Field label="Login" error={errors.username?.message}>
-              {(id) => <Input id={id} autoComplete="username" autoFocus {...register('username')} />}
+              {(id) => (
+                <Input id={id} autoComplete="username" autoFocus {...register('username')} />
+              )}
             </Field>
             <Field label="Hasło" error={errors.password?.message}>
               {(id) => (
                 <div className="relative">
-                  <Input id={id} type={show ? 'text' : 'password'} autoComplete="current-password" className="pr-10" {...register('password')} />
+                  <Input
+                    id={id}
+                    type={show ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    className="pr-10"
+                    {...register('password')}
+                  />
                   <button
                     type="button"
                     onClick={() => setShow((s) => !s)}
@@ -84,7 +98,8 @@ export function LoginForm() {
               </p>
             )}
             <Button type="submit" variant="primary" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? <Spinner className="text-current" /> : <Lock className="size-4" />} Zaloguj
+              {isSubmitting ? <Spinner className="text-current" /> : <Lock className="size-4" />}{' '}
+              Zaloguj
             </Button>
           </form>
         </Card>

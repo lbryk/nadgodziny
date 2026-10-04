@@ -73,7 +73,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           </NavLink>
 
           <LayoutGroup id="main-nav">
-            <nav className="mx-auto flex items-center gap-1 rounded-2xl bg-surface-2/70 p-1" aria-label="Główna nawigacja">
+            <nav
+              className="mx-auto flex items-center gap-1 rounded-2xl bg-surface-2/70 p-1"
+              aria-label="Główna nawigacja"
+            >
               {NAV.map(({ to, label, icon: Icon, ...rest }) => (
                 <NavLink
                   key={to}
@@ -131,8 +134,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <footer className="border-t border-line/70 py-6 text-center text-xs text-muted">
         <p>
-          Dane wpisane w kalkulatorze zapisują się wyłącznie w tej przeglądarce — nie trzeba zakładać
-          konta.
+          Dane wpisane w kalkulatorze zapisują się wyłącznie w tej przeglądarce — nie trzeba
+          zakładać konta.
         </p>
       </footer>
     </div>

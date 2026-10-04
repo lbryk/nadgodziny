@@ -65,7 +65,9 @@ export async function preprocessImage(file: Blob): Promise<Blob> {
       px[i] = px[i + 1] = px[i + 2] = v;
     }
     ctx.putImageData(img, 0, 0);
-    return await new Promise<Blob>((resolve) => canvas.toBlob((b) => resolve(b ?? file), 'image/png'));
+    return await new Promise<Blob>((resolve) =>
+      canvas.toBlob((b) => resolve(b ?? file), 'image/png'),
+    );
   } catch {
     return file;
   }
@@ -82,7 +84,8 @@ export async function recognizeImage(
     corePath: base,
     langPath: `${base}/lang`,
     gzip: true,
-    logger: (m: { status: string; progress: number }) => onProgress(m.progress, STATUS_PL[m.status] ?? m.status),
+    logger: (m: { status: string; progress: number }) =>
+      onProgress(m.progress, STATUS_PL[m.status] ?? m.status),
   });
   try {
     const prepared = await preprocessImage(file);

@@ -21,7 +21,10 @@ function tesseractAssets(): Plugin {
     return {
       'tesseract/worker.min.js': path.join(js, 'dist/worker.min.js'),
       'tesseract/tesseract-core-lstm.wasm.js': path.join(core, 'tesseract-core-lstm.wasm.js'),
-      'tesseract/tesseract-core-simd-lstm.wasm.js': path.join(core, 'tesseract-core-simd-lstm.wasm.js'),
+      'tesseract/tesseract-core-simd-lstm.wasm.js': path.join(
+        core,
+        'tesseract-core-simd-lstm.wasm.js',
+      ),
       'tesseract/tesseract-core-relaxedsimd-lstm.wasm.js': path.join(
         core,
         'tesseract-core-relaxedsimd-lstm.wasm.js',

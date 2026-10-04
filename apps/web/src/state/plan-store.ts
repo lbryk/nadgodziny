@@ -82,7 +82,10 @@ export const usePlanStore = create<PlanState>()(
 
       updateEvent: (id, patch) =>
         set((s) => ({
-          plan: { ...s.plan, events: s.plan.events.map((e) => (e.id === id ? { ...e, ...patch } : e)) },
+          plan: {
+            ...s.plan,
+            events: s.plan.events.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+          },
         })),
 
       removeEvent: (id) =>

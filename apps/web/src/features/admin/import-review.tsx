@@ -1,4 +1,11 @@
-import { DAY_KIND_LABEL, EDITABLE_KINDS, WEEKDAY_LONG_PL, formatDMY, weekdayOf, type CustomDay } from '@nadgodziny/core';
+import {
+  DAY_KIND_LABEL,
+  EDITABLE_KINDS,
+  WEEKDAY_LONG_PL,
+  formatDMY,
+  weekdayOf,
+  type CustomDay,
+} from '@nadgodziny/core';
 import { Check } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Button } from '../../components/ui/button';
@@ -27,19 +34,29 @@ export function ImportReview({
   existing: Set<string>;
 }) {
   const selected = items.filter((i) => i.selected);
-  const patch = (id: string, p: Partial<Candidate>) => onChange(items.map((i) => (i.id === id ? { ...i, ...p } : i)));
+  const patch = (id: string, p: Partial<Candidate>) =>
+    onChange(items.map((i) => (i.id === id ? { ...i, ...p } : i)));
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm">
-          Znaleziono <b>{items.length}</b> {items.length === 1 ? 'dzień' : 'dni'} — zaznaczono <b>{selected.length}</b>. Sprawdź daty i rodzaje przed dodaniem.
+          Znaleziono <b>{items.length}</b> {items.length === 1 ? 'dzień' : 'dni'} — zaznaczono{' '}
+          <b>{selected.length}</b>. Sprawdź daty i rodzaje przed dodaniem.
         </p>
         <div className="flex gap-2">
-          <Button size="sm" variant="ghost" onClick={() => onChange(items.map((i) => ({ ...i, selected: true })))}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => onChange(items.map((i) => ({ ...i, selected: true })))}
+          >
             Zaznacz wszystkie
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => onChange(items.map((i) => ({ ...i, selected: false })))}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => onChange(items.map((i) => ({ ...i, selected: false })))}
+          >
             Odznacz
           </Button>
         </div>
@@ -65,14 +82,23 @@ export function ImportReview({
                 aria-checked={c.selected}
                 aria-label={`Dodaj ${formatDMY(c.date)}`}
                 onClick={() => patch(c.id, { selected: !c.selected })}
-                className={cn('grid size-6 place-items-center rounded-md border', c.selected ? 'border-brand bg-brand text-white dark:text-[#0b0e1a]' : 'border-line bg-surface')}
+                className={cn(
+                  'grid size-6 place-items-center rounded-md border',
+                  c.selected
+                    ? 'border-brand bg-brand text-white dark:text-[#0b0e1a]'
+                    : 'border-line bg-surface',
+                )}
               >
                 {c.selected && <Check className="size-4" />}
               </button>
               <div className="text-sm">
                 <span className="num font-medium">{formatDMY(c.date)}</span>
-                <span className="ml-2 text-xs text-muted">{WEEKDAY_LONG_PL[weekdayOf(c.date) - 1]}</span>
-                {existing.has(c.date) && <span className="ml-2 text-[11px] text-warn">nadpisze</span>}
+                <span className="ml-2 text-xs text-muted">
+                  {WEEKDAY_LONG_PL[weekdayOf(c.date) - 1]}
+                </span>
+                {existing.has(c.date) && (
+                  <span className="ml-2 text-[11px] text-warn">nadpisze</span>
+                )}
               </div>
               <select
                 className={kindSelect}
@@ -102,7 +128,15 @@ export function ImportReview({
         <Button
           variant="primary"
           disabled={selected.length === 0}
-          onClick={() => onApply(selected.map(({ date, kind, label }) => ({ date, kind, ...(label ? { label } : {}) })))}
+          onClick={() =>
+            onApply(
+              selected.map(({ date, kind, label }) => ({
+                date,
+                kind,
+                ...(label ? { label } : {}),
+              })),
+            )
+          }
         >
           Dodaj zaznaczone ({selected.length}) do kalendarza
         </Button>

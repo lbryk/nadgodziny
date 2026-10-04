@@ -13,18 +13,41 @@ export interface TextImportResult {
 }
 
 const MONTHS: Record<string, number> = {
-  stycznia: 1, styczen: 1, sty: 1,
-  lutego: 2, luty: 2, lut: 2,
-  marca: 3, marzec: 3, mar: 3,
-  kwietnia: 4, kwiecien: 4, kwi: 4,
-  maja: 5, maj: 5,
-  czerwca: 6, czerwiec: 6, cze: 6,
-  lipca: 7, lipiec: 7, lip: 7,
-  sierpnia: 8, sierpien: 8, sie: 8,
-  wrzesnia: 9, wrzesien: 9, wrz: 9,
-  pazdziernika: 10, pazdziernik: 10, paz: 10,
-  listopada: 11, listopad: 11, lis: 11,
-  grudnia: 12, grudzien: 12, gru: 12,
+  stycznia: 1,
+  styczen: 1,
+  sty: 1,
+  lutego: 2,
+  luty: 2,
+  lut: 2,
+  marca: 3,
+  marzec: 3,
+  mar: 3,
+  kwietnia: 4,
+  kwiecien: 4,
+  kwi: 4,
+  maja: 5,
+  maj: 5,
+  czerwca: 6,
+  czerwiec: 6,
+  cze: 6,
+  lipca: 7,
+  lipiec: 7,
+  lip: 7,
+  sierpnia: 8,
+  sierpien: 8,
+  sie: 8,
+  wrzesnia: 9,
+  wrzesien: 9,
+  wrz: 9,
+  pazdziernika: 10,
+  pazdziernik: 10,
+  paz: 10,
+  listopada: 11,
+  listopad: 11,
+  lis: 11,
+  grudnia: 12,
+  grudzien: 12,
+  gru: 12,
 };
 
 function stripDiacritics(value: string): string {
@@ -33,15 +56,17 @@ function stripDiacritics(value: string): string {
 
 /** Cleans typical OCR damage before the date patterns run. */
 export function normalizeOcrText(text: string): string {
-  return text
-    .replace(/[‐-―−]/g, '-') // dashes
-    .replace(/(?<=\d)\s*[.,]\s*(?=\d{1,2}\b)/g, '.') // "14 , 10" → "14.10"
-    .replace(/(?<=\d)[Oo](?=\d)/g, '0') // 2O26 → 2026
-    // date-shaped tokens: letters that OCR confuses with digits (l4.1O.2O26 → 14.10.2026)
-    .replace(/(?<![\w])[\dOolI|]{1,2}[./-][\dOolI|]{1,2}[./-][\dOolI|]{4}(?![\w])/g, (token) =>
-      token.replace(/[Oo]/g, '0').replace(/[lI|]/g, '1'),
-    )
-    .replace(/[ \t]+/g, ' ');
+  return (
+    text
+      .replace(/[‐-―−]/g, '-') // dashes
+      .replace(/(?<=\d)\s*[.,]\s*(?=\d{1,2}\b)/g, '.') // "14 , 10" → "14.10"
+      .replace(/(?<=\d)[Oo](?=\d)/g, '0') // 2O26 → 2026
+      // date-shaped tokens: letters that OCR confuses with digits (l4.1O.2O26 → 14.10.2026)
+      .replace(/(?<![\w])[\dOolI|]{1,2}[./-][\dOolI|]{1,2}[./-][\dOolI|]{4}(?![\w])/g, (token) =>
+        token.replace(/[Oo]/g, '0').replace(/[lI|]/g, '1'),
+      )
+      .replace(/[ \t]+/g, ' ')
+  );
 }
 
 interface Hit {
@@ -125,7 +150,10 @@ export function extractDaysFromText(
     // 5) 18-31 stycznia 2027  /  25 marca - 30 marca 2027
     const monthWord = '([a-ząćęłńóśźż]{3,13})';
     consume(
-      new RegExp(`(\\d{1,2})\\s*${monthWord}?\\s*-\\s*(\\d{1,2})\\s+${monthWord}(?:\\s+(\\d{4}))?`, 'gi'),
+      new RegExp(
+        `(\\d{1,2})\\s*${monthWord}?\\s*-\\s*(\\d{1,2})\\s+${monthWord}(?:\\s+(\\d{4}))?`,
+        'gi',
+      ),
       (m) => {
         const endMonth = MONTHS[stripDiacritics((m[4] ?? '').toLowerCase())];
         if (!endMonth) return null;
@@ -161,7 +189,11 @@ export function extractDaysFromText(
     if (hits.length === 0) continue;
     const kind = inferKind(line, defaultKind);
     // what is left of the line once the dates are removed ("Ferie zimowe", "Dzień Edukacji Narodowej")
-    const label = rest.replace(/[\s:;,()\-–—.]+/g, ' ').trim().slice(0, 120) || undefined;
+    const label =
+      rest
+        .replace(/[\s:;,()\-–—.]+/g, ' ')
+        .trim()
+        .slice(0, 120) || undefined;
     for (const hit of hits) {
       const single = hit.from === hit.to;
       for (const date of eachDay(hit.from, hit.to)) {
@@ -172,12 +204,15 @@ export function extractDaysFromText(
   }
 
   const days = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
-  if (days.length === 0) warnings.push('Nie rozpoznano żadnych dat. Spróbuj wyraźniejszego zdjęcia.');
+  if (days.length === 0)
+    warnings.push('Nie rozpoznano żadnych dat. Spróbuj wyraźniejszego zdjęcia.');
   const outOfRange = days.filter(
     (d) => d.date < makeISO(schoolYearStart, 8, 1) || d.date > makeISO(schoolYearStart + 1, 8, 31),
   );
   if (outOfRange.length) {
-    warnings.push(`${outOfRange.length} dat leży poza rokiem szkolnym ${schoolYearStart}/${schoolYearStart + 1}.`);
+    warnings.push(
+      `${outOfRange.length} dat leży poza rokiem szkolnym ${schoolYearStart}/${schoolYearStart + 1}.`,
+    );
   }
   return { days, warnings };
 }

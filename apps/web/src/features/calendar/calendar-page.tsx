@@ -11,7 +11,14 @@ import {
   type CalendarDay,
   type DayKind,
 } from '@nadgodziny/core';
-import { CalendarArrowDown, CalendarCheck2, CalendarX2, Flag, GraduationCap, Snowflake } from 'lucide-react';
+import {
+  CalendarArrowDown,
+  CalendarCheck2,
+  CalendarX2,
+  Flag,
+  GraduationCap,
+  Snowflake,
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useMemo, useState } from 'react';
 import { Badge } from '../../components/ui/badge';
@@ -57,17 +64,26 @@ export default function CalendarPage() {
   const range = (r: { from: string; to: string }) => `${formatDM(r.from)}–${formatDMY(r.to)}`;
   const keyDates = [
     { icon: GraduationCap, label: 'Początek roku', value: formatDMY(calendar.startDate) },
-    { icon: Snowflake, label: 'Zimowa przerwa', value: range(winterBreak(settings.schoolYearStart)) },
-    { icon: CalendarX2, label: 'Wiosenna przerwa', value: range(easterBreak(settings.schoolYearStart)) },
+    {
+      icon: Snowflake,
+      label: 'Zimowa przerwa',
+      value: range(winterBreak(settings.schoolYearStart)),
+    },
+    {
+      icon: CalendarX2,
+      label: 'Wiosenna przerwa',
+      value: range(easterBreak(settings.schoolYearStart)),
+    },
     { icon: Flag, label: 'Koniec zajęć', value: formatDMY(calendar.endDate) },
   ];
   // official term for the configured voivodeship; falls back to the days marked as ferie
   const feriePeriod = (() => {
     const preset = feriePreset(settings.schoolYearStart, settings.voivodeship);
     if (preset) return preset;
-    const marked = eachDay(`${settings.schoolYearStart + 1}-01-01`, `${settings.schoolYearStart + 1}-02-28`).filter(
-      (d) => calendar.days[d]?.kind === 'ferie',
-    );
+    const marked = eachDay(
+      `${settings.schoolYearStart + 1}-01-01`,
+      `${settings.schoolYearStart + 1}-02-28`,
+    ).filter((d) => calendar.days[d]?.kind === 'ferie');
     return marked.length ? { from: marked[0]!, to: marked[marked.length - 1]! } : null;
   })();
 
@@ -79,11 +95,15 @@ export default function CalendarPage() {
             Kalendarz roku szkolnego <span className="text-brand">{calendar.label}</span>
           </h1>
           <p className="max-w-2xl text-muted">
-            Tabela rozliczeń korzysta z tego kalendarza: święta, przerwy, ferie, Dzień Edukacji Narodowej, dni wolne
-            ustalone przez dyrektora i dni egzaminów. Zmiany wprowadza administrator.
+            Tabela rozliczeń korzysta z tego kalendarza: święta, przerwy, ferie, Dzień Edukacji
+            Narodowej, dni wolne ustalone przez dyrektora i dni egzaminów. Zmiany wprowadza
+            administrator.
           </p>
         </div>
-        <Button variant="outline" onClick={() => downloadCalendarIcs(calendar, settings.schoolName)}>
+        <Button
+          variant="outline"
+          onClick={() => downloadCalendarIcs(calendar, settings.schoolName)}
+        >
           <CalendarArrowDown className="size-4" /> Pobierz do kalendarza (.ics)
         </Button>
       </div>
@@ -117,9 +137,7 @@ export default function CalendarPage() {
           </div>
           <div>
             <p className="text-xs text-muted">Ferie zimowe</p>
-            <p className="num font-semibold">
-              {feriePeriod ? range(feriePeriod) : 'brak danych'}
-            </p>
+            <p className="num font-semibold">{feriePeriod ? range(feriePeriod) : 'brak danych'}</p>
           </div>
         </motion.div>
       </div>
@@ -153,7 +171,9 @@ export default function CalendarPage() {
                 </button>
               );
             })}
-            <span className="ml-auto text-xs text-muted">Dni zajęć: <strong className="num text-ink">{counts.school ?? 0}</strong></span>
+            <span className="ml-auto text-xs text-muted">
+              Dni zajęć: <strong className="num text-ink">{counts.school ?? 0}</strong>
+            </span>
           </div>
 
           <AnimatePresence mode="wait">
@@ -169,8 +189,12 @@ export default function CalendarPage() {
                   <strong className="num">
                     {WEEKDAY_LONG_PL[weekdayOf(selected) - 1]}, {formatDMY(selected)}
                   </strong>
-                  <Badge tone={detail.kind === 'school' ? 'brand' : 'neutral'}>{DAY_KIND_LABEL[detail.kind]}</Badge>
-                  {detail.label && detail.label !== DAY_KIND_LABEL[detail.kind] && <span className="text-muted">{detail.label}</span>}
+                  <Badge tone={detail.kind === 'school' ? 'brand' : 'neutral'}>
+                    {DAY_KIND_LABEL[detail.kind]}
+                  </Badge>
+                  {detail.label && detail.label !== DAY_KIND_LABEL[detail.kind] && (
+                    <span className="text-muted">{detail.label}</span>
+                  )}
                 </span>
               ) : (
                 <span className="text-muted">Kliknij dzień, aby zobaczyć szczegóły.</span>
@@ -196,7 +220,13 @@ export default function CalendarPage() {
                 {m.teachingDays} dni zajęć · {m.workdays} roboczych
               </span>
             </div>
-            <MonthGrid month={m} calendar={calendar} selected={selected} onSelect={setSelected} today={today} />
+            <MonthGrid
+              month={m}
+              calendar={calendar}
+              selected={selected}
+              onSelect={setSelected}
+              today={today}
+            />
           </motion.div>
         ))}
       </div>
@@ -204,7 +234,11 @@ export default function CalendarPage() {
       <Card>
         <CardHeader
           title="Dni wolne i wydarzenia"
-          description={filter.size ? 'Przefiltrowane wg wybranych rodzajów.' : 'Wszystkie dni powszednie, w które nie ma zajęć lub odbywają się egzaminy.'}
+          description={
+            filter.size
+              ? 'Przefiltrowane wg wybranych rodzajów.'
+              : 'Wszystkie dni powszednie, w które nie ma zajęć lub odbywają się egzaminy.'
+          }
         />
         <CardBody>
           <div className="scroll-thin max-h-[28rem] overflow-y-auto rounded-xl border border-line">
@@ -219,12 +253,20 @@ export default function CalendarPage() {
               </thead>
               <tbody>
                 {offDays.map((d) => (
-                  <tr key={d.date} className="border-t border-line transition-colors hover:bg-surface-2/50">
+                  <tr
+                    key={d.date}
+                    className="border-t border-line transition-colors hover:bg-surface-2/50"
+                  >
                     <td className="num px-4 py-2 whitespace-nowrap">{formatDMY(d.date)}</td>
-                    <td className="px-4 py-2 text-muted">{WEEKDAY_LONG_PL[weekdayOf(d.date) - 1]}</td>
+                    <td className="px-4 py-2 text-muted">
+                      {WEEKDAY_LONG_PL[weekdayOf(d.date) - 1]}
+                    </td>
                     <td className="px-4 py-2">
                       <span className="inline-flex items-center gap-2">
-                        <span className="size-2.5 rounded-full" style={{ backgroundColor: KIND_BG[d.kind] }} />
+                        <span
+                          className="size-2.5 rounded-full"
+                          style={{ backgroundColor: KIND_BG[d.kind] }}
+                        />
                         {DAY_KIND_LABEL[d.kind]}
                       </span>
                     </td>

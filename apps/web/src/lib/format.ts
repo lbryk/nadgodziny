@@ -1,5 +1,8 @@
 const nf2 = new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-const nf2fixed = new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const nf2fixed = new Intl.NumberFormat('pl-PL', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
 const money = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' });
 
 /** 3,83 — up to two decimals, Polish decimal comma. */
