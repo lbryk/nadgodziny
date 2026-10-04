@@ -13,3 +13,4 @@ export * from './import/kinds';
 export * from './import/xml';
 export * from './import/ics';
 export * from './import/text';
+export * from './import/timetable';
