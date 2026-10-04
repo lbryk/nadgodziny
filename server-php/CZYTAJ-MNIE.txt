@@ -1,0 +1,30 @@
+NADGODZINY — wersja na zwykły hosting (FTP, PHP)
+=================================================
+
+Wymagania: hosting z PHP 7.4 lub nowszym (zwykły hosting współdzielony wystarczy).
+Node.js, Docker i baza danych NIE są potrzebne.
+
+1. USTAW HASŁO ADMINISTRATORA (najważniejsze)
+   Otwórz plik  api/config.php  i w linii 'admin_password' wpisz własne hasło
+   (min. 10 znaków). Dopóki zostaje tekst ZMIEN-TO-HASLO-NA-WLASNE, panel
+   administratora jest zablokowany.
+
+2. WYŚLIJ PLIKI
+   Wyślij ZAWARTOŚĆ folderu nadgodziny-ftp (razem z plikami zaczynającymi się
+   od kropki, np. .htaccess — włącz w programie FTP "pokaż ukryte pliki")
+   do katalogu domeny (np. public_html/ albo public_html/nadgodziny/).
+
+3. SPRAWDŹ UPRAWNIENIA
+   Katalog api/data musi być zapisywalny dla PHP (zwykle 755, a gdy trzeba 775).
+   Tam zapisują się ustawienia i kalendarz. Plik store.php powstaje sam.
+
+4. WEJDŹ NA STRONĘ
+   Kalkulator: https://twoja-domena/
+   Panel admina (ukryty, bez linku w menu): https://twoja-domena/#/admin
+   (adres z "#", bo hosting nie musi obsługiwać przepisywania adresów).
+
+KOPIA ZAPASOWA: w panelu admina jest "Pobierz kopię". Folder api/data możesz też
+skopiować przez FTP. Przy aktualizacji aplikacji NIE nadpisuj api/data ani
+api/config.php.
+
+W razie problemów: api/index.php?r=health powinno zwrócić {"status":"ok",...}.

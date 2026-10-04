@@ -12,3 +12,9 @@ playwright-report/
 test-results/
 *.tsbuildinfo
 release/
+release-ftp/
+dist-ftp/
+!server-php/api/data/
+server-php/api/data/*
+!server-php/api/data/.htaccess
+!server-php/api/data/index.html

@@ -1,0 +1,81 @@
+{
+  "settings": {
+    "schoolName": "Zespół Szkół",
+    "schoolYearStart": 2026,
+    "voivodeship": "mazowieckie",
+    "denIsDayOff": true,
+    "weights": {
+      "k12": 1,
+      "k34": 0.9,
+      "k5": 0.8,
+      "individual": 1
+    },
+    "weeksPerMonth": 4.16,
+    "rounding": "nearest",
+    "workdaysBasis": "working-days",
+    "absenceCounting": "lesson-days",
+    "examDays": "neutral",
+    "class5EndDate": "2027-04-30",
+    "pensumPresets": [
+      18,
+      20,
+      22,
+      30
+    ],
+    "defaultPensum": 18,
+    "submissionDeadline": "2026-10-09T16:00",
+    "announcement": "Przypominamy o zmianie planu od 5 października 2026."
+  },
+  "customDays": [
+    {
+      "date": "2026-12-22",
+      "kind": "director",
+      "label": "Dzień wolny od zajęć (decyzja dyrektora)"
+    },
+    {
+      "date": "2027-05-28",
+      "kind": "director",
+      "label": "Dzień wolny od zajęć (po Bożym Ciele)"
+    },
+    {
+      "date": "2027-01-12",
+      "kind": "exam",
+      "label": "Egzaminy – sesja zimowa"
+    },
+    {
+      "date": "2027-05-04",
+      "kind": "exam",
+      "label": "Egzaminy – matura"
+    },
+    {
+      "date": "2027-05-05",
+      "kind": "exam",
+      "label": "Egzaminy – matura"
+    },
+    {
+      "date": "2027-05-06",
+      "kind": "exam",
+      "label": "Egzaminy – matura"
+    },
+    {
+      "date": "2027-05-07",
+      "kind": "exam",
+      "label": "Egzaminy – matura"
+    },
+    {
+      "date": "2027-06-08",
+      "kind": "exam",
+      "label": "Egzaminy – sesja letnia"
+    },
+    {
+      "date": "2027-06-09",
+      "kind": "exam",
+      "label": "Egzaminy – sesja letnia"
+    },
+    {
+      "date": "2027-06-25",
+      "kind": "exam",
+      "label": "Egzaminy – sesja letnia"
+    }
+  ]
+}
