@@ -202,7 +202,7 @@ function buildRowCalcs(
   rows: WeekRow[],
   days: Record<ISODate, DayCalc>,
   individualInPensum: boolean,
-): Omit<RowCalc, 'pensum' | 'overtime'>[] {
+): Omit<RowCalc, 'pensum' | 'pensumExact' | 'overtime'>[] {
   return rows.map((row) => {
     const cells = row.cells.map((c) => (c.date ? (days[c.date] ?? null) : null));
     let hours = ZERO;
@@ -257,14 +257,16 @@ function computeVariant2(
   }
 
   const rows: RowCalc[] = base.map((r) => {
-    if (r.countedDays === 0) return { ...r, pensum: 0, overtime: 0 };
+    if (r.countedDays === 0) return { ...r, pensum: 0, pensumExact: 0, overtime: 0 };
     if (averaged === null) {
-      return { ...r, pensum: r2(D(pensum).times(r.weight)), overtime: 0 };
+      const plain = D(pensum).times(r.weight);
+      return { ...r, pensum: r2(plain), pensumExact: plain.toNumber(), overtime: 0 };
     }
     const rowPensum = D(averaged).times(r.weight);
     return {
       ...r,
       pensum: r2(rowPensum),
+      pensumExact: rowPensum.toNumber(),
       overtime: clampNonNegative(D(r.hours).minus(rowPensum)).toNumber(),
     };
   });

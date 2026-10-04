@@ -79,7 +79,7 @@ test.describe('teacher calculator', () => {
     await expect(page.getByTestId('overtime-total')).toHaveText('247');
   });
 
-  test('exports PDF and DOCX', async ({ page }) => {
+  test('exports PDF, Word and Excel', async ({ page }) => {
     const problems = watchErrors(page);
     await openStep(page, 'dane');
     await page.getByLabel('Imię i nazwisko').fill('Zażółć Gęślą');
@@ -101,12 +101,21 @@ test.describe('teacher calculator', () => {
 
     const [docx] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByRole('button', { name: 'DOCX' }).click(),
+      page.getByRole('button', { name: 'Word' }).click(),
     ]);
     expect(docx.suggestedFilename()).toBe('nadgodziny-zazolc-gesla-2026-2027.docx');
     const docxBytes = readFileSync(await docx.path());
     expect(docxBytes.subarray(0, 2).toString()).toBe('PK'); // a .docx is a zip
     expect(docxBytes.length).toBeGreaterThan(5_000);
+
+    const [xlsx] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('button', { name: 'Excel' }).click(),
+    ]);
+    expect(xlsx.suggestedFilename()).toBe('nadgodziny-zazolc-gesla-2026-2027.xlsx');
+    const xlsxBytes = readFileSync(await xlsx.path());
+    expect(xlsxBytes.subarray(0, 2).toString()).toBe('PK'); // an .xlsx is a zip too
+    expect(xlsxBytes.length).toBeGreaterThan(5_000);
     expect(problems).toEqual([]);
   });
 

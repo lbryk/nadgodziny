@@ -28,8 +28,10 @@ export interface RowCalc {
   weight: number;
   hours: number;
   individualSeparate: number;
-  /** Averaged pensum attributable to this row. */
+  /** Averaged pensum attributable to this row (two decimals, for display). */
   pensum: number;
+  /** The same value without rounding — what the overtime was computed from. */
+  pensumExact: number;
   overtime: number;
 }
 

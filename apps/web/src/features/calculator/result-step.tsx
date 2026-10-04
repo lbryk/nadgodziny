@@ -1,6 +1,7 @@
 import {
   ChevronDown,
   FileDown,
+  FileSpreadsheet,
   FileText,
   FolderOpen,
   Printer,
@@ -39,6 +40,9 @@ import { fmt, fmt2, fmtPln, hoursWord } from '../../lib/format';
 import { usePlanStore } from '../../state/plan-store';
 import { V1Steps } from './v1-steps';
 
+type ExportKind = 'pdf' | 'docx' | 'xlsx';
+const EXPORT_LABEL: Record<ExportKind, string> = { pdf: 'PDF', docx: 'Word', xlsx: 'Excel' };
+
 export default function ResultStep() {
   const { plan, settings, calendar, result } = useCalc();
   const { patch, replacePlan, setMonthly, unsetMonthly } = usePlanStore();
@@ -46,7 +50,7 @@ export default function ResultStep() {
     ...DEFAULT_REPORT_OPTIONS,
     weekly: plan.variant === 2,
   });
-  const [busy, setBusy] = useState<'pdf' | 'docx' | null>(null);
+  const [busy, setBusy] = useState<ExportKind | null>(null);
   const [open, setOpen] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -65,17 +69,20 @@ export default function ResultStep() {
     'Wariant 2': m.v2.overtime,
   }));
 
-  const run = async (kind: 'pdf' | 'docx') => {
+  const run = async (kind: ExportKind) => {
     setBusy(kind);
     try {
       if (kind === 'pdf') {
         const { exportPdf } = await import('../../export/pdf');
         await exportPdf(report, options);
-      } else {
+      } else if (kind === 'docx') {
         const { exportDocx } = await import('../../export/docx');
         await exportDocx(report, options);
+      } else {
+        const { exportXlsx } = await import('../../export/xlsx');
+        await exportXlsx(report, options);
       }
-      toast.success(kind === 'pdf' ? 'Plik PDF został pobrany.' : 'Plik DOCX został pobrany.');
+      toast.success(`Plik ${EXPORT_LABEL[kind]} został pobrany.`);
     } catch (error) {
       console.error(error);
       toast.error('Nie udało się wygenerować pliku. Spróbuj ponownie.');
@@ -126,7 +133,7 @@ export default function ResultStep() {
               </Badge>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" data-tour="export-buttons">
             <Button variant="primary" size="lg" onClick={() => run('pdf')} disabled={busy !== null}>
               {busy === 'pdf' ? (
                 <Spinner className="text-current" />
@@ -140,8 +147,18 @@ export default function ResultStep() {
               variant="outline"
               onClick={() => run('docx')}
               disabled={busy !== null}
+              title="Dokument Word (.docx)"
             >
-              {busy === 'docx' ? <Spinner /> : <FileText className="size-5" />} DOCX
+              {busy === 'docx' ? <Spinner /> : <FileText className="size-5" />} Word
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => run('xlsx')}
+              disabled={busy !== null}
+              title="Arkusz Excel (.xlsx) z formułami"
+            >
+              {busy === 'xlsx' ? <Spinner /> : <FileSpreadsheet className="size-5" />} Excel
             </Button>
             <Button size="lg" variant="outline" onClick={() => printReport(options)}>
               <Printer className="size-5" /> Drukuj

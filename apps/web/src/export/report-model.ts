@@ -15,6 +15,9 @@ import { fmt, fmt2, fmtPln } from '../lib/format';
 export type ReportCellKind = 'school' | 'off' | 'exam' | 'void';
 
 export interface ReportCell {
+  /** Numbers for spreadsheets: regular and individual hours of the day. */
+  regularValue: number;
+  individualValue: number;
   /** Regular part, e.g. "3" */
   regular: string;
   /** Individual-teaching part (printed green), e.g. "1" */
@@ -30,6 +33,8 @@ export interface ReportRow {
   pensum: string;
   overtime: string;
   dead: boolean;
+  /** Unrounded numbers for spreadsheets (Excel recomputes overtime from them). */
+  values: { hours: number; pensum: number; overtime: number; individual: number };
 }
 
 export interface ReportMonthBlock {
@@ -40,11 +45,14 @@ export interface ReportMonthBlock {
   pensum: string;
   overtimeRaw: string;
   payable: string;
+  payableValue: number;
 }
 
 export interface MonthlyLine {
   label: string;
   cells: string[];
+  /** Same columns as `cells`, as numbers. */
+  values: number[];
 }
 
 export interface Report {
@@ -63,6 +71,11 @@ export interface Report {
   monthlyHeader: string[];
   monthlyLines: MonthlyLine[];
   monthlyTotal: string[];
+  monthlyTotalValues: number[];
+  /** How the monthly overtime is rounded (mirrors the admin setting). */
+  rounding: 'nearest' | 'up' | 'down';
+  /** Individual teaching is part of the contract (counted in the hours, not paid separately). */
+  individualInPensum: boolean;
   events: { title: string; range: string; effect: string; settlement: string }[];
   notes: string[];
   total: { overtime: number; extras: number; text: string };
@@ -111,34 +124,56 @@ export function buildReport(
     pensum: fmt2(m.pensum),
     overtimeRaw: fmt2(m.overtimeRaw),
     payable: String(m.overtime),
-    rows: m.rows.map((rc) => ({
-      label: rc.row.label,
-      dead: rc.countedDays === 0,
-      hours: rc.countedDays === 0 ? '' : fmt(rc.hours),
-      pensum: rc.countedDays === 0 ? '' : fmt2(rc.pensum),
-      overtime: rc.countedDays === 0 ? '' : fmt2(rc.overtime),
-      cells: rc.row.cells.map((cell, i): ReportCell => {
-        const day = rc.cells[i] ?? null;
-        const kind = KIND_TO_REPORT[cell.kind];
-        if (!day || kind !== 'school') {
-          if (kind === 'exam' && day) {
+    payableValue: m.overtime,
+    rows: m.rows.map((rc) => {
+      const dead = rc.countedDays === 0;
+      const individualSum = rc.cells.reduce((a, d) => a + (d?.counted ? d.individual : 0), 0);
+      return {
+        label: rc.row.label,
+        dead,
+        hours: dead ? '' : fmt(rc.hours),
+        pensum: dead ? '' : fmt2(rc.pensum),
+        overtime: dead ? '' : fmt2(rc.overtime),
+        values: {
+          hours: rc.hours,
+          pensum: rc.pensumExact,
+          overtime: rc.overtime,
+          individual: plan.individualInPensum ? 0 : individualSum,
+        },
+        cells: rc.row.cells.map((cell, i): ReportCell => {
+          const day = rc.cells[i] ?? null;
+          const kind = KIND_TO_REPORT[cell.kind];
+          if (!day || kind !== 'school') {
+            if (kind === 'exam' && day) {
+              return {
+                regular: day.regular ? fmt(day.regular) : '',
+                individual: day.individual ? fmt(day.individual) : '',
+                regularValue: 0,
+                individualValue: 0,
+                kind,
+                excluded: true,
+              };
+            }
             return {
-              regular: day.regular ? fmt(day.regular) : '',
-              individual: day.individual ? fmt(day.individual) : '',
+              regular: '',
+              individual: '',
+              regularValue: 0,
+              individualValue: 0,
               kind,
-              excluded: true,
+              excluded: false,
             };
           }
-          return { regular: '', individual: '', kind, excluded: false };
-        }
-        return {
-          regular: day.regular ? fmt(day.regular) : day.individual ? '0' : '',
-          individual: day.individual ? fmt(day.individual) : '',
-          kind,
-          excluded: false,
-        };
-      }),
-    })),
+          return {
+            regular: day.regular ? fmt(day.regular) : day.individual ? '0' : '',
+            individual: day.individual ? fmt(day.individual) : '',
+            regularValue: day.regular,
+            individualValue: day.individual,
+            kind,
+            excluded: false,
+          };
+        }),
+      };
+    }),
   }));
 
   const monthlyHeader = [
@@ -175,8 +210,18 @@ export function buildReport(
         f(e.other),
         fmt(total),
       ],
+      values: [overtime, e.substitutions, e.individual, e.trips, e.exams, e.other, total],
     };
   });
+  const monthlyTotalValues = [
+    result.selected.overtimeTotal,
+    sumExtras.sub,
+    sumExtras.ind,
+    sumExtras.trips,
+    sumExtras.exams,
+    sumExtras.other,
+    sumExtras.total,
+  ];
   const monthlyTotal = [
     fmt(result.selected.overtimeTotal),
     fmt(sumExtras.sub),
@@ -308,6 +353,9 @@ export function buildReport(
     monthlyHeader,
     monthlyLines,
     monthlyTotal,
+    monthlyTotalValues,
+    rounding: settings.rounding,
+    individualInPensum: plan.individualInPensum,
     events,
     notes,
     total: {
