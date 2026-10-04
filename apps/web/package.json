@@ -1,0 +1,49 @@
+{
+  "name": "@nadgodziny/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "React client: teacher calculator, school calendar, hidden admin panel.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/file-saver": "^2.0.7",
+    "@types/pdfmake": "^0.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.3.2"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@hookform/resolvers": "^5.9.1",
+    "@nadgodziny/core": "^1.0.0",
+    "@tanstack/react-query": "^5.104.1",
+    "@tesseract.js-data/pol": "^1.0.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
+    "docx": "^9.8.1",
+    "file-saver": "^2.0.5",
+    "lucide-react": "^1.52.0",
+    "motion": "^14.0.0",
+    "pdfmake": "^0.3.11",
+    "radix-ui": "^1.6.7",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-hook-form": "^7.89.0",
+    "react-router-dom": "^7.18.4",
+    "recharts": "^3.10.1",
+    "sonner": "^2.0.8",
+    "tailwind-merge": "^3.7.0",
+    "tesseract.js": "^7.0.0",
+    "zod": "^4.6.5",
+    "zustand": "^5.0.15"
+  }
+}

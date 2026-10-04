@@ -1,0 +1,175 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:root {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-2: #eef1f8;
+  --ink: #0e1426;
+  --muted: #5a6479;
+  --line: #e2e6f0;
+  --brand: #4f46e5;
+  --brand-600: #4338ca;
+  --brand-soft: #eceafe;
+  --accent: #0ea5a4;
+  --ok: #059669;
+  --warn: #d97706;
+  --danger: #e11d48;
+
+  /* calendar day kinds */
+  --k-holiday: #fecdd3;
+  --k-break: #ddd6fe;
+  --k-ferie: #bae6fd;
+  --k-den: #fde68a;
+  --k-director: #fed7aa;
+  --k-exam: #fde047;
+  --k-other: #d4d9e4;
+  --k-outside: #e7e9f0;
+  --k-void: #cdd2de;
+  --k-ind: #16a34a;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #090c18;
+  --surface: #111628;
+  --surface-2: #1a2036;
+  --ink: #e9edf9;
+  --muted: #98a2bd;
+  --line: #262e49;
+  --brand: #818cf8;
+  --brand-600: #6366f1;
+  --brand-soft: #1e2250;
+  --accent: #2dd4bf;
+  --ok: #34d399;
+  --warn: #fbbf24;
+  --danger: #fb7185;
+
+  --k-holiday: #7f1d3a;
+  --k-break: #4c3a8a;
+  --k-ferie: #124a6b;
+  --k-den: #7a5a0c;
+  --k-director: #7c3f12;
+  --k-exam: #8a7a06;
+  --k-other: #3a425c;
+  --k-outside: #1d2338;
+  --k-void: #2a3250;
+  --k-ind: #4ade80;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-600: var(--brand-600);
+  --color-brand-soft: var(--brand-soft);
+  --color-accent: var(--accent);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --radius-card: 1.25rem;
+  --shadow-card: 0 1px 2px rgb(15 20 38 / 0.04), 0 8px 24px -12px rgb(15 20 38 / 0.12);
+  --shadow-pop: 0 18px 50px -12px rgb(15 20 38 / 0.35);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--brand) 30%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer components {
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .glass {
+    background: color-mix(in oklab, var(--surface) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  }
+  .hatch {
+    background-image: repeating-linear-gradient(
+      135deg,
+      transparent 0 5px,
+      color-mix(in oklab, var(--ink) 9%, transparent) 5px 6px
+    );
+  }
+  .bg-aurora {
+    background:
+      radial-gradient(60rem 28rem at 12% -8%, color-mix(in oklab, var(--brand) 22%, transparent), transparent 60%),
+      radial-gradient(44rem 24rem at 92% -4%, color-mix(in oklab, var(--accent) 20%, transparent), transparent 60%),
+      var(--bg);
+  }
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted) 45%, transparent) transparent;
+  }
+}
+
+/* ---- print: only the report is shown ---- */
+.print-only {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  body > #root > *:not(.print-root) {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-root * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
