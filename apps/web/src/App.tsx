@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { runtimeConfig } from './lib/api';
 import { Toaster } from 'sonner';
 import { AppShell } from './components/layout/app-shell';
 import { TooltipProvider } from './components/ui/tooltip';
@@ -59,13 +60,15 @@ function AnimatedRoutes() {
   );
 }
 
+const Router = runtimeConfig().router === 'hash' ? HashRouter : BrowserRouter;
+
 export default function App() {
   const theme = useThemeStore((s) => s.preference);
   return (
     <QueryClientProvider client={queryClient}>
       <MotionConfig reducedMotion="user">
         <TooltipProvider>
-          <BrowserRouter>
+          <Router>
             <CalcProvider>
               <AppShell>
                 <AnimatedRoutes />
@@ -73,7 +76,7 @@ export default function App() {
               <PrintHost />
               <Tour />
             </CalcProvider>
-          </BrowserRouter>
+          </Router>
           <Toaster
             position="bottom-right"
             theme={theme === 'system' ? 'system' : theme}

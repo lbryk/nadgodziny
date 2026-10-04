@@ -57,7 +57,9 @@ function tesseractAssets(): Plugin {
   };
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  // 'ftp' build: relative URLs so the folder can be uploaded anywhere (domain root or a sub-folder)
+  base: mode === 'ftp' ? './' : '/',
   plugins: [react(), tailwindcss(), tesseractAssets()],
   server: {
     port: 5173,
@@ -67,4 +69,4 @@ export default defineConfig({
     sourcemap: false,
     chunkSizeWarningLimit: 900,
   },
-});
+}));

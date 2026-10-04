@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "build:ftp": "tsc --noEmit && vite build --mode ftp --outDir dist-ftp",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },

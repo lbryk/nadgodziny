@@ -17,13 +17,32 @@ export class ApiError extends Error {
   }
 }
 
+interface RuntimeConfig {
+  api?: 'path' | 'query';
+  router?: 'browser' | 'hash';
+}
+
+export function runtimeConfig(): RuntimeConfig {
+  return (window as unknown as { __NADGODZINY__?: RuntimeConfig }).__NADGODZINY__ ?? {};
+}
+
+/** `/api/admin/login` on the Node server, `api/index.php?r=admin/login` on PHP hosting. */
+export function apiUrl(path: string): string {
+  const route = path.replace(/^\/api\//, '');
+  return runtimeConfig().api === 'query' ? `api/index.php?r=${route}` : `/api/${route}`;
+}
+
 async function request<T>(path: string, init: RequestInit & { json?: unknown } = {}): Promise<T> {
   const { json, headers, ...rest } = init;
-  const res = await fetch(path, {
+  // Shared PHP hosting often rejects PUT, so there it is tunnelled through POST.
+  const tunnel = runtimeConfig().api === 'query' && rest.method === 'PUT';
+  const res = await fetch(apiUrl(path), {
     credentials: 'same-origin',
     ...rest,
+    ...(tunnel ? { method: 'POST' } : {}),
     headers: {
       Accept: 'application/json',
+      ...(tunnel ? { 'X-HTTP-Method-Override': 'PUT' } : {}),
       ...(json !== undefined ? { 'Content-Type': 'application/json' } : {}),
       ...headers,
     },
