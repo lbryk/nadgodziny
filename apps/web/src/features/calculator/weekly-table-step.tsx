@@ -247,14 +247,14 @@ export default function WeeklyTableStep() {
             <Metric label="Twoje godziny" value={`${fmt(v2.annualHours)} godz.`} />
             <Metric
               label="Pensum uśrednione"
-              value={v2.averagedPensum === null ? '—' : `${fmt2(v2.averagedPensum)} godz./tydz.`}
+              value={v2.averagedPensum === null ? '—' : fmt2(v2.averagedPensum)}
               accent
               hint={
                 v2.averagedPensumSource === 'manual'
-                  ? 'ustawione ręcznie'
+                  ? 'godz./tydz. · ustawione ręcznie'
                   : v2.averagedPensum === null
                     ? 'brak nadwyżki w roku'
-                    : 'liczone automatycznie'
+                    : 'godz./tydz. · liczone automatycznie'
               }
             />
           </dl>

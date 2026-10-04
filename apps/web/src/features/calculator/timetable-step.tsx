@@ -49,7 +49,7 @@ function HourCell({
         }
       }}
       className={cn(
-        'num h-11 w-full min-w-11 rounded-xl border border-line bg-surface text-center text-[15px] font-medium transition-shadow placeholder:text-muted/40 focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none',
+        'num h-11 w-full min-w-9 rounded-xl border border-line bg-surface text-center text-[15px] font-medium transition-shadow placeholder:text-muted/40 focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none',
         green && 'text-[var(--k-ind)]',
         value > 0 && 'border-brand/35 bg-brand-soft/50',
       )}
@@ -72,7 +72,7 @@ export function TimetableStep() {
         />
         <CardBody>
           <div className="scroll-thin -mx-2 overflow-x-auto px-2 pb-1">
-            <table className="w-full min-w-[640px] border-separate border-spacing-y-2">
+            <table className="w-full min-w-[440px] border-separate border-spacing-y-2">
               <thead>
                 <tr className="text-xs text-muted">
                   <th className="text-left font-medium" />
@@ -101,7 +101,10 @@ export function TimetableStep() {
                         <div className="flex items-center gap-2.5">
                           <span className={cn('size-2.5 rounded-full', row.dot)} />
                           <div className="leading-tight">
-                            <div className="text-sm font-medium whitespace-nowrap">{row.label}</div>
+                            <div className="text-sm font-medium whitespace-nowrap">
+                              <span className="sm:hidden">{row.short}</span>
+                              <span className="hidden sm:inline">{row.label}</span>
+                            </div>
                             <div className="text-[11px] text-muted">
                               {row.id === 'ind' ? 'zielone w tabeli' : `waga ${fmt(weight)}`}
                             </div>
