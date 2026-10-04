@@ -106,6 +106,7 @@ export default function ResultStep() {
             </p>
             <p className="mt-2 flex items-baseline gap-3">
               <CountUp
+                testId="overtime-total"
                 value={selected.overtimeTotal}
                 className="num text-6xl font-semibold tracking-tight"
               />

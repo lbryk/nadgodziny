@@ -79,7 +79,13 @@ export async function buildApp({ config, store }: BuildAppOptions): Promise<Fast
   });
   await app.register(fastifyCompress, { global: true });
   await app.register(fastifyCookie);
-  await app.register(fastifyRateLimit, { global: false });
+  await app.register(fastifyRateLimit, {
+    global: false,
+    errorResponseBuilder: (_request, context) => ({
+      statusCode: 429,
+      error: `Zbyt wiele prób. Spróbuj ponownie za ${Math.ceil(context.ttl / 1000)} s.`,
+    }),
+  });
   await app.register(fastifyJwt, {
     secret: jwtSecret,
     cookie: { cookieName: COOKIE_NAME, signed: false },
@@ -128,7 +134,7 @@ export async function buildApp({ config, store }: BuildAppOptions): Promise<Fast
 
   app.post(
     '/api/admin/login',
-    { config: { rateLimit: { max: 8, timeWindow: '1 minute' } } },
+    { config: { rateLimit: { max: config.LOGIN_RATE_LIMIT, timeWindow: '1 minute' } } },
     async (request, reply) => {
       const body = loginBody.safeParse(request.body);
       if (!body.success) return reply.code(400).send({ error: 'Podaj login i hasło.' });

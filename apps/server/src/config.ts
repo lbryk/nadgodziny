@@ -16,6 +16,8 @@ const schema = z.object({
   ADMIN_PASSWORD: z.string().optional(),
   ADMIN_PASSWORD_RESET: bool.default(false),
   JWT_SECRET: z.string().min(16).optional(),
+  /** Login attempts allowed per minute and IP address. */
+  LOGIN_RATE_LIMIT: z.coerce.number().int().min(1).max(10_000).default(8),
   SESSION_HOURS: z.coerce.number().min(1).max(168).default(8),
   /** Set to 1 when the site is served over HTTPS (recommended in production). */
   COOKIE_SECURE: bool.optional(),

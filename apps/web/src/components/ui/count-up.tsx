@@ -8,11 +8,13 @@ export function CountUp({
   decimals = 0,
   className,
   duration = 0.7,
+  testId,
 }: {
   value: number;
   decimals?: number;
   className?: string;
   duration?: number;
+  testId?: string;
 }) {
   const reduce = useReducedMotion();
   const mv = useMotionValue(value);
@@ -29,5 +31,9 @@ export function CountUp({
     return () => controls.stop();
   }, [value, reduce, duration, mv]);
 
-  return <motion.span className={className}>{text}</motion.span>;
+  return (
+    <motion.span className={className} data-testid={testId}>
+      {text}
+    </motion.span>
+  );
 }

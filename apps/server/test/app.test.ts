@@ -116,8 +116,14 @@ describe('admin authentication', () => {
 
   it('rate-limits login attempts', async () => {
     let last = 0;
-    for (let i = 0; i < 10; i += 1) last = (await login('bad')).res.statusCode;
+    let body = '';
+    for (let i = 0; i < 10; i += 1) {
+      const { res } = await login('bad');
+      last = res.statusCode;
+      body = res.body;
+    }
     expect(last).toBe(429);
+    expect(JSON.parse(body).error).toMatch(/Zbyt wiele prób/);
   });
 
   it('refuses cross-site mutations', async () => {

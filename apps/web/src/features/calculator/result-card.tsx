@@ -55,6 +55,7 @@ export function ResultCard({ onOpenResult }: { onOpenResult: () => void }) {
           <p className="text-xs text-muted">Nadgodziny do wypłaty w roku szkolnym</p>
           <p className="mt-1 flex items-baseline gap-2">
             <CountUp
+              testId="overtime-total"
               value={selected.overtimeTotal}
               className="num text-5xl font-semibold tracking-tight"
             />
