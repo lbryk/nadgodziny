@@ -22,6 +22,20 @@ ukrytym panelu.
 
 Zasady obliczeń krok po kroku: [`docs/ZASADY.md`](docs/ZASADY.md).
 
+## Zrzuty ekranu
+
+| Tabela tygodniowa (wariant 2)                        | Wynik i porównanie wariantów |
+| ---------------------------------------------------- | ---------------------------- |
+| ![Tabela tygodniowa](docs/img/tabela-tygodniowa.png) | ![Wynik](docs/img/wynik.png) |
+
+| Kalendarz roku szkolnego             | Panel admina — ustawienia i wagi             |
+| ------------------------------------ | -------------------------------------------- |
+| ![Kalendarz](docs/img/kalendarz.png) | ![Ustawienia](docs/img/admin-ustawienia.png) |
+
+| Import dni wolnych ze zdjęcia / zrzutu ekranu    | Widok mobilny                             |
+| ------------------------------------------------ | ----------------------------------------- |
+| ![Import OCR](docs/img/admin-import-zdjecie.png) | ![Mobile](docs/img/mobilny-przydzial.png) |
+
 ## Szybki start (development)
 
 Wymagania: Node.js 22 (minimum 20.11), npm 10.
