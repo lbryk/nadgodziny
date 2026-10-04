@@ -1,5 +1,5 @@
 import { BookOpenText, CalendarDays, Calculator, CloudOff } from 'lucide-react';
-import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
+import { LayoutGroup, motion } from 'motion/react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useCalc } from '../../hooks/calc-context';
@@ -119,17 +119,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 sm:px-6 sm:py-8">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {children}
-          </motion.div>
-        </AnimatePresence>
+        {children}
       </main>
 
       <footer className="border-t border-line/70 py-6 text-center text-xs text-muted">
