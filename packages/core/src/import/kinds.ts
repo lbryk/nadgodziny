@@ -17,7 +17,9 @@ export function inferKind(text: string, fallback: ImportKind = 'other'): ImportK
   if (/swiet|nowy rok|boze cialo|wielkanoc|boze narodzenie|wigilia|konstytucji|niepodleglosci|trzech kroli|wszystkich swietych/.test(t)) {
     return 'holiday';
   }
-  if (/zajec|szkola|dzien pracy|nauka/.test(t)) return 'school';
+  // "dzień wolny od zajęć" must not be mistaken for a teaching day
+  if (/wolny|wolne|bez zajec|odwolan/.test(t)) return 'other';
+  if (/dzien pracy|dzien nauki|zajecia odbywaja|odpracow/.test(t)) return 'school';
   return fallback;
 }
 

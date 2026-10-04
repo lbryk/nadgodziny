@@ -23,6 +23,7 @@ describe('kind inference', () => {
     expect(inferKind('Dzień Edukacji Narodowej')).toBe('den');
     expect(inferKind('Boże Ciało')).toBe('holiday');
     expect(inferKind('Dzień wolny ustalony przez dyrektora')).toBe('director');
+    expect(inferKind('Dzień wolny od zajęć')).toBe('other');
     expect(inferKind('coś zupełnie innego', 'other')).toBe('other');
   });
 });
@@ -103,7 +104,16 @@ describe('text (OCR) extraction', () => {
   it('reads full dates', () => {
     const { days } = extractDaysFromText('14.10.2026 - Dzień Edukacji Narodowej', opts);
     expect(days).toHaveLength(1);
-    expect(days[0]).toMatchObject({ date: '2026-10-14', kind: 'den' });
+    expect(days[0]).toMatchObject({ date: '2026-10-14', kind: 'den', label: 'Dzień Edukacji Narodowej' });
+  });
+
+  it('uses what is left of the line as the label', () => {
+    const { days } = extractDaysFromText('Ferie zimowe: 01.02 – 14.02.2027', opts);
+    expect(days[0]!.label).toBe('Ferie zimowe');
+    expect(extractDaysFromText('Dzień wolny od zajęć 22.12.2026', opts).days[0]).toMatchObject({
+      kind: 'other',
+      label: 'Dzień wolny od zajęć',
+    });
   });
 
   it('reads ranges with the year at the end and skips weekends', () => {

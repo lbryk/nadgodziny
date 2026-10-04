@@ -160,12 +160,13 @@ export function extractDaysFromText(
 
     if (hits.length === 0) continue;
     const kind = inferKind(line, defaultKind);
-    const label = line.replace(/\s+/g, ' ').slice(0, 120);
+    // what is left of the line once the dates are removed ("Ferie zimowe", "Dzień Edukacji Narodowej")
+    const label = rest.replace(/[\s:;,()\-–—.]+/g, ' ').trim().slice(0, 120) || undefined;
     for (const hit of hits) {
       const single = hit.from === hit.to;
       for (const date of eachDay(hit.from, hit.to)) {
         if (!single && !includeWeekends && isWeekend(date)) continue;
-        byDate.set(date, { date, kind, label, source: line });
+        byDate.set(date, { date, kind, ...(label ? { label } : {}), source: line });
       }
     }
   }
