@@ -17,17 +17,20 @@ function HourCell({
   onChange,
   label,
   green,
+  max = 12,
 }: {
   value: number;
   onChange: (v: number) => void;
   label: string;
   green?: boolean;
+  /** Upper bound: 12 lessons for a single day, 60 for a weekly total. */
+  max?: number;
 }) {
   const text = value === 0 ? '' : String(value).replace('.', ',');
   const commit = (raw: string) => {
     const n = Number(raw.replace(',', '.'));
     onChange(
-      raw.trim() === '' || Number.isNaN(n) ? 0 : Math.min(12, Math.max(0, Math.round(n * 2) / 2)),
+      raw.trim() === '' || Number.isNaN(n) ? 0 : Math.min(max, Math.max(0, Math.round(n * 2) / 2)),
     );
   };
   return (
@@ -42,7 +45,7 @@ function HourCell({
         if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
           e.preventDefault();
-          onChange(Math.min(12, Math.max(0, value + (e.key === 'ArrowUp' ? 1 : -1))));
+          onChange(Math.min(max, Math.max(0, value + (e.key === 'ArrowUp' ? 1 : -1))));
         }
       }}
       className={cn(
@@ -120,6 +123,7 @@ export function TimetableStep() {
                           value={sum}
                           green={row.id === 'ind'}
                           label={`${row.label} — suma tygodniowa`}
+                          max={60}
                           onChange={(total) => setTimetableRow(row.id, distribute(total))}
                         />
                       </td>
