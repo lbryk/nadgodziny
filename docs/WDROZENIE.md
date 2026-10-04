@@ -3,6 +3,26 @@
 Aplikacja to jeden proces Node.js (Fastify), który serwuje i API, i zbudowany klient. Dane trzyma w jednym pliku
 `store.json` w katalogu `DATA_DIR`.
 
+## 0. Hosting z PHP przez FTP (bez Node i bez Dockera)
+
+Dla zwykłego hostingu współdzielonego. Backend jest napisany w PHP (`server-php/`), dane trzyma w
+`api/data/store.php`. Klient używa adresów z `#` (`/#/admin`), więc nie są potrzebne reguły przepisywania.
+
+```bash
+npm ci
+npm run package:ftp    # tworzy release-ftp/nadgodziny-ftp/ oraz nadgodziny-ftp.zip
+```
+
+1. Otwórz `api/config.php` i ustaw `admin_password` (min. 10 znaków) — do tego czasu panel jest zablokowany.
+2. Wyślij całą zawartość `nadgodziny-ftp/` do katalogu domeny. Włącz w kliencie FTP pokazywanie plików
+   ukrytych — `.htaccess` (w katalogu głównym i w `api/`, `api/data/`) chroni dane.
+3. Katalog `api/data` musi być zapisywalny dla PHP (755 albo 775).
+4. Sprawdź `https://domena/api/index.php?r=health` — powinno zwrócić `{"status":"ok",...}`.
+
+Wymagania: PHP 7.4+ (przetestowano na 8.3). Aktualizacja: nadpisz wszystko **poza** `api/data/` i
+`api/config.php`. Na hostingu bez Apache (nginx) zablokuj w konfiguracji dostęp do `api/data/` i `api/config.php`.
+Po zmianie ustawień domyślnych w `packages/core` uruchom `npm run gen:php-defaults` (test pilnuje spójności).
+
 ## 1. Paczka do wgrania na serwer (zalecane dla zwykłego VPS / hostingu z Node)
 
 Na swoim komputerze:

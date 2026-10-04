@@ -17,8 +17,12 @@ ukrytym panelu.
 | **Etat**         | pensum 18 / 20 / 22 / 30 lub własne, etat 1, 3/4, 1/2, 1/4 albo dowolna liczba godzin — wszystko od razu przelicza wyniki                                                                                    |
 | **Wydarzenia**   | wycieczki, szkolenia, nieobecności, praktyki uczniowskie, egzaminy ustne, asystent/operator, zastępstwa (w tym „w okienku” – niepłatne), nauczanie indywidualne; podgląd wpływu na wynik                     |
 | **Kalendarz**    | generowany z reguł MEN + oficjalne terminy ferii 2027 dla 16 województw + dni szkoły; widok miesięcy i eksport `.ics`                                                                                        |
-| **Eksport**      | PDF (pdfmake), DOCX (docx) i wydruk w układzie tabeli szkoły; kopia robocza JSON                                                                                                                             |
+| **Eksport**      | PDF (pdfmake), DOCX (docx), **Excel (XLSX z formułami)** i wydruk w układzie tabeli szkoły; kopia robocza JSON                                                                                               |
 | **Panel admina** | ukryty (`/admin`, Ctrl+Alt+A albo 5 kliknięć w logo); ustawienia i wagi, zaokrąglanie, pensum; dni wolne z formularza, **XML**, **ICS**, **zdjęcia / zrzutu ekranu (OCR w przeglądarce)** lub tekstu         |
+
+Dodatkowo: **import z planu lekcji** (zrzut z dziennika, zdjęcie, PDF, DOCX, DOC — godziny z jednego dnia są
+sumowane, wynik trafia do ręcznego przeglądu), **animacje** przy wpisywaniu i usuwaniu godzin, **favicon** oraz
+**samouczek** pokazujący się przy pierwszej wizycie (można go wyłączyć w dowolnym kroku i uruchomić ponownie z menu).
 
 Zasady obliczeń krok po kroku: [`docs/ZASADY.md`](docs/ZASADY.md).
 
@@ -56,7 +60,17 @@ npm run lint && npm run typecheck && npm run format:check
 
 ## Wdrożenie na serwer
 
-Trzy drogi — szczegóły w [`docs/WDROZENIE.md`](docs/WDROZENIE.md).
+Cztery drogi — szczegóły w [`docs/WDROZENIE.md`](docs/WDROZENIE.md).
+
+**0. Zwykły hosting z PHP, przez FTP (bez Node i bez Dockera)**
+
+```bash
+npm run package:ftp  # → release-ftp/nadgodziny-ftp.zip
+```
+
+Rozpakuj, wpisz hasło admina w `api/config.php` i wyślij zawartość folderu przez FTP (wraz z plikami ukrytymi,
+np. `.htaccess`). Wymagane PHP 7.4+; katalog `api/data` musi być zapisywalny. Panel: `https://domena/#/admin`.
+Instrukcja jest też w pliku `CZYTAJ-MNIE.txt` wewnątrz paczki.
 
 **1. Paczka do wgrania (najprościej, Node.js 20+ na serwerze)**
 
