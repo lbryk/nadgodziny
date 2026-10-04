@@ -6,6 +6,7 @@ import { useCalc } from '../../hooks/calc-context';
 import { cn } from '../../lib/cn';
 import { Badge } from '../ui/badge';
 import { LogoMark } from '../ui/logo';
+import { TourMenu } from '../../features/tour/tour-menu';
 import { ThemeToggle } from './theme-toggle';
 
 const NAV = [
@@ -76,6 +77,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <nav
               className="mx-auto flex items-center gap-1 rounded-2xl bg-surface-2/70 p-1"
               aria-label="Główna nawigacja"
+              data-tour="nav"
             >
               {NAV.map(({ to, label, icon: Icon, ...rest }) => (
                 <NavLink
@@ -113,6 +115,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <CloudOff className="size-3" /> tryb lokalny
               </Badge>
             )}
+            <TourMenu />
             <ThemeToggle />
           </div>
         </div>

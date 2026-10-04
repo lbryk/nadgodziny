@@ -234,7 +234,7 @@ export default function WeeklyTableStep() {
 
   return (
     <div className="space-y-6">
-      <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+      <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} data-tour="avg-pensum">
         <CardHeader
           icon={<Sigma className="size-5" />}
           title="Pensum uśrednione"

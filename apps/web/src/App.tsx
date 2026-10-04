@@ -8,6 +8,7 @@ import { TooltipProvider } from './components/ui/tooltip';
 import { Spinner } from './components/ui/spinner';
 import { CalcProvider } from './hooks/calc-context';
 import { PrintHost } from './export/print-host';
+import { Tour } from './features/tour/tour';
 import { useThemeStore } from './state/theme-store';
 
 const CalculatorPage = lazy(() => import('./features/calculator/calculator-page'));
@@ -70,6 +71,7 @@ export default function App() {
                 <AnimatedRoutes />
               </AppShell>
               <PrintHost />
+              <Tour />
             </CalcProvider>
           </BrowserRouter>
           <Toaster

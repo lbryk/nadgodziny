@@ -102,6 +102,7 @@ export default function CalculatorPage() {
       <LayoutGroup id="steps">
         <nav
           aria-label="Kroki kalkulatora"
+          data-tour="steps"
           className="scroll-thin -mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
         >
           {STEPS.map(({ id, label, icon: Icon }, i) => {

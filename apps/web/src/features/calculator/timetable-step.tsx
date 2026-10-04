@@ -89,7 +89,7 @@ export function TimetableStep() {
           }
         />
         <CardBody>
-          <div className="scroll-thin -mx-2 overflow-x-auto px-2 pb-1">
+          <div className="scroll-thin -mx-2 overflow-x-auto px-2 pb-1" data-tour="timetable">
             <table className="w-full min-w-[440px] border-separate border-spacing-y-2">
               <thead>
                 <tr className="text-xs text-muted">

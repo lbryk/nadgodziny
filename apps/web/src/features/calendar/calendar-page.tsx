@@ -142,7 +142,7 @@ export default function CalendarPage() {
         </motion.div>
       </div>
 
-      <Card>
+      <Card data-tour="calendar-legend">
         <CardBody className="space-y-4 pt-5">
           <div className="flex flex-wrap items-center gap-2">
             {LEGEND.map((k) => {

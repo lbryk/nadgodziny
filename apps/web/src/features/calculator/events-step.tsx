@@ -205,7 +205,7 @@ export default function EventsStep() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,4fr)]">
-      <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+      <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} data-tour="event-form">
         <CardHeader
           icon={<CalendarPlus className="size-5" />}
           title={editing ? 'Edytuj wydarzenie' : 'Dodaj wydarzenie'}

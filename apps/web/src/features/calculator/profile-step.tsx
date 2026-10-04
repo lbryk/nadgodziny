@@ -60,81 +60,84 @@ export function ProfileStep() {
             )}
           </Field>
 
-          <div className="flex flex-col gap-1.5 sm:col-span-2">
-            <span className="text-[13px] font-medium">
-              Pensum — pełny etat dla Twojego zatrudnienia
-            </span>
-            <div className="flex flex-wrap items-center gap-3">
-              <Segmented
-                aria-label="Pensum"
-                value={customPensum ? ('custom' as const) : plan.pensumFull}
-                onChange={(v) => {
-                  if (v === 'custom') setCustomPensum(true);
-                  else {
-                    setCustomPensum(false);
-                    setPensumFull(v);
-                  }
-                }}
-                options={[
-                  ...presets.map((p) => ({ value: p as number | 'custom', label: `${p} godz.` })),
-                  { value: 'custom' as const, label: 'Inne' },
-                ]}
-              />
-              {customPensum && (
-                <NumberField
-                  className="w-32"
-                  value={plan.pensumFull}
-                  min={1}
-                  max={60}
-                  step={0.5}
-                  suffix="godz."
-                  aria-label="Pensum w godzinach"
-                  onChange={setPensumFull}
+          <div className="grid gap-5 sm:col-span-2" data-tour="pensum">
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[13px] font-medium">
+                Pensum — pełny etat dla Twojego zatrudnienia
+              </span>
+              <div className="flex flex-wrap items-center gap-3">
+                <Segmented
+                  aria-label="Pensum"
+                  value={customPensum ? ('custom' as const) : plan.pensumFull}
+                  onChange={(v) => {
+                    if (v === 'custom') setCustomPensum(true);
+                    else {
+                      setCustomPensum(false);
+                      setPensumFull(v);
+                    }
+                  }}
+                  options={[
+                    ...presets.map((p) => ({ value: p as number | 'custom', label: `${p} godz.` })),
+                    { value: 'custom' as const, label: 'Inne' },
+                  ]}
                 />
-              )}
+                {customPensum && (
+                  <NumberField
+                    className="w-32"
+                    value={plan.pensumFull}
+                    min={1}
+                    max={60}
+                    step={0.5}
+                    suffix="godz."
+                    aria-label="Pensum w godzinach"
+                    onChange={setPensumFull}
+                  />
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-1.5 sm:col-span-2">
-            <span className="text-[13px] font-medium">Wymiar zatrudnienia (etat)</span>
-            <div className="flex flex-wrap items-center gap-3">
-              <Segmented<EtatPreset>
-                aria-label="Etat"
-                value={etat}
-                onChange={(v) => {
-                  setCustomEtat(v === 'custom');
-                  if (v !== 'custom')
-                    setContractHours(
-                      Math.round(plan.pensumFull * (v === 'full' ? 1 : Number(v)) * 100) / 100,
-                    );
-                }}
-                options={[
-                  { value: 'full', label: 'Pełny etat' },
-                  { value: '0.75', label: '3/4' },
-                  { value: '0.5', label: '1/2' },
-                  { value: '0.25', label: '1/4' },
-                  { value: 'custom', label: 'Własny' },
-                ]}
-              />
-              {etat === 'custom' && (
-                <NumberField
-                  className="w-32"
-                  value={plan.contractHours}
-                  min={0.5}
-                  max={plan.pensumFull}
-                  step={0.5}
-                  suffix="godz."
-                  aria-label="Liczba godzin w umowie"
-                  onChange={setContractHours}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[13px] font-medium">Wymiar zatrudnienia (etat)</span>
+              <div className="flex flex-wrap items-center gap-3">
+                <Segmented<EtatPreset>
+                  aria-label="Etat"
+                  value={etat}
+                  onChange={(v) => {
+                    setCustomEtat(v === 'custom');
+                    if (v !== 'custom')
+                      setContractHours(
+                        Math.round(plan.pensumFull * (v === 'full' ? 1 : Number(v)) * 100) / 100,
+                      );
+                  }}
+                  options={[
+                    { value: 'full', label: 'Pełny etat' },
+                    { value: '0.75', label: '3/4' },
+                    { value: '0.5', label: '1/2' },
+                    { value: '0.25', label: '1/4' },
+                    { value: 'custom', label: 'Własny' },
+                  ]}
                 />
-              )}
-              <Badge tone="brand">
-                {fmt(plan.contractHours)} godz./tydz. · {percent}% etatu
-              </Badge>
+                {etat === 'custom' && (
+                  <NumberField
+                    className="w-32"
+                    value={plan.contractHours}
+                    min={0.5}
+                    max={plan.pensumFull}
+                    step={0.5}
+                    suffix="godz."
+                    aria-label="Liczba godzin w umowie"
+                    onChange={setContractHours}
+                  />
+                )}
+                <Badge tone="brand">
+                  {fmt(plan.contractHours)} godz./tydz. · {percent}% etatu
+                </Badge>
+              </div>
+              <p className="text-xs text-muted">
+                Nadgodziny liczą się od tego wymiaru. Zmiana etatu od razu przelicza wszystkie
+                wyniki.
+              </p>
             </div>
-            <p className="text-xs text-muted">
-              Nadgodziny liczą się od tego wymiaru. Zmiana etatu od razu przelicza wszystkie wyniki.
-            </p>
           </div>
 
           <div className="sm:col-span-2">
@@ -170,6 +173,7 @@ export function ProfileStep() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.06 }}
+        data-tour="variant"
       >
         <CardHeader
           title="Który wariant rozliczenia?"
