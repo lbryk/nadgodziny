@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { ADMIN, calendarScreenshot, loginAsAdmin, watchErrors } from './helpers';
 
 test.describe('hidden administrator panel', () => {

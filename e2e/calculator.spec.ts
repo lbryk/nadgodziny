@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { openStep, setWeekly, watchErrors } from './helpers';
 
 test.describe('teacher calculator', () => {
@@ -17,6 +17,16 @@ test.describe('teacher calculator', () => {
     await expect(page.getByText('23', { exact: true }).first()).toBeVisible();
     await expect(page.getByTestId('overtime-total')).toHaveText('210');
     expect(problems).toEqual([]);
+  });
+
+  test('typing and removing hours is acknowledged with +/- bubbles', async ({ page }) => {
+    await openStep(page, 'przydzial');
+    await setWeekly(page, /Klasy 1.2 — suma/, 15);
+    await expect(page.getByText('+3').first()).toBeVisible();
+    const monday = page.getByLabel('Klasy 1–2, Pn');
+    await monday.fill('0');
+    await monday.blur();
+    await expect(page.getByText('−3').first()).toBeVisible();
   });
 
   test('part-time contract changes the result immediately', async ({ page }) => {
