@@ -356,3 +356,49 @@ describe('separately settled hours', () => {
     expect(run({ ...p, variant: 2 }).selected.overtimeTotal).toBe(run(p).v2.total);
   });
 });
+
+describe('averaged pensum — randomised invariants', () => {
+  // small deterministic PRNG so failures are reproducible
+  function rng(seed: number) {
+    let s = seed;
+    return () => {
+      s = (s * 1664525 + 1013904223) % 4294967296;
+      return s / 4294967296;
+    };
+  }
+
+  it('overtime over all weeks always equals the real surplus over the pensum', () => {
+    for (let seed = 1; seed <= 200; seed += 1) {
+      const next = rng(seed);
+      const count = 5 + Math.floor(next() * 45);
+      const weeks = Array.from({ length: count }, () => {
+        const weight = [0.2, 0.4, 0.6, 0.8, 1][Math.floor(next() * 5)]!;
+        return { weight, hours: Math.round(next() * 30 * weight * 2) / 2 };
+      });
+      const pensum = [9, 13.5, 18, 20, 22][Math.floor(next() * 5)]!;
+      const { value, annualSurplus } = solveAveragedPensum(weeks, pensum);
+      const surplus =
+        weeks.reduce((a, w) => a + w.hours, 0) - pensum * weeks.reduce((a, w) => a + w.weight, 0);
+      if (surplus <= 0) {
+        expect(value, `seed ${seed}`).toBeNull();
+        continue;
+      }
+      expect(annualSurplus).toBeCloseTo(surplus, 9);
+      const over = weeks.reduce((a, w) => a + Math.max(0, w.hours - value! * w.weight), 0);
+      expect(over, `seed ${seed}`).toBeCloseTo(surplus, 8);
+      expect(value!, `seed ${seed}`).toBeGreaterThanOrEqual(pensum - 1e-9);
+    }
+  });
+
+  it('is monotone: more hours never lower the paid overtime', () => {
+    const base = Array.from({ length: 20 }, (_, i) => ({ weight: 1, hours: 14 + (i % 7) }));
+    const paid = (weeks: typeof base) => {
+      const { value } = solveAveragedPensum(weeks, 18);
+      return value === null
+        ? 0
+        : weeks.reduce((a, w) => a + Math.max(0, w.hours - value * w.weight), 0);
+    };
+    const more = base.map((w, i) => (i === 3 ? { ...w, hours: w.hours + 2 } : w));
+    expect(paid(more)).toBeGreaterThanOrEqual(paid(base));
+  });
+});
