@@ -1,0 +1,29 @@
+{
+  "name": "@nadgodziny/server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "HTTP API (settings, school calendar, admin auth) and static host for the web client.",
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.15"
+  },
+  "dependencies": {
+    "@fastify/compress": "^9.2.0",
+    "@fastify/cookie": "^11.1.2",
+    "@fastify/helmet": "^13.1.1",
+    "@fastify/jwt": "^10.2.2",
+    "@fastify/rate-limit": "^11.2.0",
+    "@fastify/static": "^10.1.5",
+    "@nadgodziny/core": "^1.0.0",
+    "fastify": "^5.12.5",
+    "zod": "^4.6.5"
+  }
+}
