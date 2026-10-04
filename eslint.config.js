@@ -8,6 +8,7 @@ export default tseslint.config(
     ignores: [
       '**/dist/**',
       '**/node_modules/**',
+      'release/**',
       'coverage/**',
       'playwright-report/**',
       'test-results/**',
@@ -39,7 +40,14 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.test.ts', '**/test/**', 'e2e/**', '*.config.ts', 'apps/*/*.config.ts'],
+    files: [
+      '**/*.test.ts',
+      '**/test/**',
+      'e2e/**',
+      'scripts/**',
+      '*.config.ts',
+      'apps/*/*.config.ts',
+    ],
     rules: { 'no-console': 'off' },
   },
 );
