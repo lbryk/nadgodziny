@@ -1,0 +1,24 @@
+# systemd unit: copy to /etc/systemd/system/nadgodziny.service, adjust paths and user, then
+#   systemctl daemon-reload && systemctl enable --now nadgodziny
+[Unit]
+Description=Nadgodziny - kalkulator nadgodzin nauczycieli
+After=network.target
+
+[Service]
+Type=simple
+User=nadgodziny
+WorkingDirectory=/opt/nadgodziny
+EnvironmentFile=/opt/nadgodziny/.env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node server/index.js
+Restart=on-failure
+RestartSec=3
+# hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/nadgodziny/data
+
+[Install]
+WantedBy=multi-user.target

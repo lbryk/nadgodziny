@@ -45,6 +45,8 @@ export async function buildApp({ config, store }: BuildAppOptions): Promise<Fast
   const app = Fastify({
     logger: config.NODE_ENV === 'test' ? false : { level: config.LOG_LEVEL },
     trustProxy: config.TRUST_PROXY,
+    // one access-log line per request is noise for a school site; enable with LOG_LEVEL=debug
+    disableRequestLogging: !['debug', 'trace'].includes(config.LOG_LEVEL),
     bodyLimit: 2 * 1024 * 1024,
   });
 

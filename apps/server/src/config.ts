@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
@@ -36,7 +37,10 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const parsed = schema.parse(env);
-  const defaultDist = path.resolve(here, '../../web/dist');
+  // monorepo build (apps/server/dist -> apps/web/dist) or release package (server/ next to web/)
+  const candidates = [path.resolve(here, '../web'), path.resolve(here, '../../web/dist')];
+  const defaultDist =
+    candidates.find((dir) => existsSync(path.join(dir, 'index.html'))) ?? candidates[1]!;
   return {
     ...parsed,
     COOKIE_SECURE: parsed.COOKIE_SECURE ?? false,

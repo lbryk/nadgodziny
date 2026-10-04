@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Kalkulator nadgodzin nauczycieli — wariant uśredniony i rozliczenie tygodniowe wg kalendarza roku szkolnego.",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "type": "module",
   "engines": {
     "node": ">=20.11"
@@ -22,7 +22,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "package": "npm run build && node scripts/package-release.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

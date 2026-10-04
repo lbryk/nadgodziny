@@ -1,0 +1,14 @@
+NADGODZINY - szybkie wdrożenie na serwer (Node.js 20+)
+=====================================================
+
+1. Wgraj zawartość tego folderu na serwer, np. do /opt/nadgodziny (FTP/SFTP/scp).
+2. cp .env.example .env   i ustaw przynajmniej ADMIN_PASSWORD (długie hasło!).
+3. npm install --omit=dev
+4. ./start.sh             (albo: pm2 start ecosystem.config.cjs  /  systemd: nadgodziny.service)
+5. Aplikacja działa na porcie 3000 (PORT w .env). Postaw przed nią nginx z HTTPS
+   (nginx.conf.example) i ustaw w .env: COOKIE_SECURE=1, TRUST_PROXY=1.
+
+Panel administratora jest ukryty: otwórz /admin albo naciśnij Ctrl+Alt+A (lub kliknij 5 razy w logo).
+Dane (ustawienia, kalendarz, hasło) leżą w katalogu DATA_DIR (domyślnie ./data/store.json) - rób kopie.
+
+Szczegóły: docs/WDROZENIE.md w repozytorium.
