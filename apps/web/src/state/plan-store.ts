@@ -26,6 +26,7 @@ interface PlanState {
   updateEvent: (id: string, patch: Partial<TeacherEvent>) => void;
   removeEvent: (id: string) => void;
   setMonthly: (monthKey: string, patch: MonthlyAdjustments) => void;
+  unsetMonthly: (monthKey: string, field: keyof MonthlyAdjustments) => void;
   replacePlan: (plan: TeacherPlan) => void;
   reset: (defaultPensum?: number) => void;
 }
@@ -94,6 +95,13 @@ export const usePlanStore = create<PlanState>()(
             monthly: { ...s.plan.monthly, [monthKey]: { ...s.plan.monthly[monthKey], ...patch } },
           },
         })),
+
+      unsetMonthly: (monthKey, field) =>
+        set((s) => {
+          const { [field]: _removed, ...rest } = s.plan.monthly[monthKey] ?? {};
+          void _removed;
+          return { plan: { ...s.plan, monthly: { ...s.plan.monthly, [monthKey]: rest } } };
+        }),
 
       replacePlan: (plan) => set({ plan }),
 
