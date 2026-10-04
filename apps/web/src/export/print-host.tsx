@@ -145,7 +145,7 @@ export function PrintHost() {
                 <td style={{ ...td, textAlign: 'center', fontWeight: 700 }}>{m.hours}</td>
                 <td style={{ ...td, textAlign: 'center' }}>{m.pensum}</td>
                 <td style={{ ...td, textAlign: 'center', fontWeight: 700 }}>
-                  {m.overtimeRaw} → {m.payable} godz.
+                  {m.overtimeRaw} ≈ {m.payable} godz.
                 </td>
               </tr>
             </tbody>

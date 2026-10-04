@@ -29,4 +29,12 @@ describe('calendar ICS export', () => {
     expect(kinds['2026-10-14']).toBe('den');
     expect(kinds['2027-05-05']).toBe('exam');
   });
+
+  it('escapes commas and semicolons in names', () => {
+    const cal = buildCalendar({
+      settings: DEFAULT_SETTINGS,
+      customDays: [{ date: '2026-11-02', kind: 'director', label: 'Rada; zebranie, szkolenie' }],
+    });
+    expect(buildCalendarIcs(cal, 'Szkoła')).toContain('SUMMARY:Rada\\; zebranie\\, szkolenie');
+  });
 });

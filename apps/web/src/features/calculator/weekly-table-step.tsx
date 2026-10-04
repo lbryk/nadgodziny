@@ -123,7 +123,11 @@ const DayCell = memo(function DayCell({
             defaultValue={text}
             key={text}
             inputMode="decimal"
-            aria-label={`${formatDM(date)}, liczba godzin`}
+            aria-label={
+              kind === 'exam'
+                ? `${formatDM(date)}, liczba godzin (dzień egzaminów, niepłatne)`
+                : `${formatDM(date)}, liczba godzin`
+            }
             aria-invalid={invalid || undefined}
             placeholder="·"
             onFocus={(e) => e.currentTarget.select()}

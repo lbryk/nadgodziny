@@ -168,7 +168,7 @@ function weeklyTable(report: Report): Table {
           }),
           cell(
             [
-              para(`${month.overtimeRaw} → ${month.payable} godz.`, {
+              para(`${month.overtimeRaw} ≈ ${month.payable} godz.`, {
                 align: AlignmentType.CENTER,
                 bold: true,
               }),

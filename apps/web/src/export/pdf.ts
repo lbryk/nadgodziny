@@ -45,14 +45,14 @@ function weeklyTable(report: Report): Content {
     { text: 'Liczba godzin razem', rowSpan: 2, alignment: 'center', bold: true },
     { text: 'Pensum uśrednione', rowSpan: 2, alignment: 'center', bold: true },
     { text: 'Liczba godzin ponadwymiarowych', rowSpan: 2, alignment: 'center', bold: true },
-  ].map((c) => ({ fillColor: C.head, ...c })) as TableCell[];
+  ].map((c) => ({ text: '', fillColor: C.head, ...c })) as TableCell[];
   const head2: TableCell[] = [
     {},
     ...report.weekdays.map((d) => ({ text: d, alignment: 'center', bold: true })),
     {},
     {},
     {},
-  ].map((c) => ({ fillColor: C.head, ...c })) as TableCell[];
+  ].map((c) => ({ text: '', fillColor: C.head, ...c })) as TableCell[];
 
   const body: TableCell[][] = [head1, head2];
   const monthStarts = new Set<number>();
@@ -87,7 +87,7 @@ function weeklyTable(report: Report): Content {
       { text: month.hours, alignment: 'center', bold: true, fillColor: C.soft },
       { text: month.pensum, alignment: 'center', fillColor: C.soft },
       {
-        text: `${month.overtimeRaw}  →  ${month.payable} godz.`,
+        text: `${month.overtimeRaw} ≈ ${month.payable} godz.`,
         alignment: 'center',
         bold: true,
         fillColor: C.soft,
