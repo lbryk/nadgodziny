@@ -638,7 +638,7 @@ function PhotoImport({
         return URL.createObjectURL(file);
       });
       try {
-        const { recognizeImage } = await import('./ocr');
+        const { recognizeImage } = await import('../../lib/ocr');
         const recognized = await recognizeImage(file, (p, s) => {
           setProgress(p);
           setStatus(s);

@@ -6,6 +6,7 @@ import {
   type MonthlyAdjustments,
   type TeacherEvent,
   type TeacherPlan,
+  type Timetable,
 } from '@nadgodziny/core';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -20,6 +21,7 @@ interface PlanState {
   setContractHours: (hours: number) => void;
   setTimetableCell: (row: TimetableRow, day: number, hours: number) => void;
   setTimetableRow: (row: TimetableRow, values: number[]) => void;
+  setTimetable: (timetable: Timetable) => void;
   setOverride: (date: string, value: string | null) => void;
   clearOverrides: (dates?: string[]) => void;
   addEvent: (event: TeacherEvent) => void;
@@ -61,6 +63,8 @@ export const usePlanStore = create<PlanState>()(
 
       setTimetableRow: (row, values) =>
         set((s) => ({ plan: { ...s.plan, timetable: { ...s.plan.timetable, [row]: values } } })),
+
+      setTimetable: (timetable) => set((s) => ({ plan: { ...s.plan, timetable } })),
 
       setOverride: (date, value) =>
         set((s) => {

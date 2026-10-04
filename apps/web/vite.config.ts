@@ -8,7 +8,7 @@ import { defineConfig, type Plugin } from 'vite';
 const require = createRequire(import.meta.url);
 
 /**
- * OCR runs fully in the browser (photos never leave the device). The tesseract.js worker, WASM
+ * OCR and PDF reading run fully in the browser (files never leave the device). The tesseract.js worker, WASM
  * cores and the Polish language model are self-hosted so the feature works offline and under the
  * strict CSP — they are served in dev and emitted into the production bundle.
  */
@@ -30,6 +30,11 @@ function tesseractAssets(): Plugin {
         'tesseract-core-relaxedsimd-lstm.wasm.js',
       ),
       'tesseract/lang/pol.traineddata.gz': path.join(pol, '4.0.0_best_int/pol.traineddata.gz'),
+      // pdf.js worker (reading PDF lesson plans) — served as is, never transformed by the dev server
+      'pdfjs/pdf.worker.min.mjs': path.join(
+        pkgDir('pdfjs-dist'),
+        'legacy/build/pdf.worker.min.mjs',
+      ),
     } as Record<string, string>;
   };
   return {
@@ -40,7 +45,7 @@ function tesseractAssets(): Plugin {
         const url = (req.url ?? '').split('?')[0]!.replace(/^\//, '');
         const file = map[url];
         if (!file || !existsSync(file)) return next();
-        res.setHeader('Content-Type', url.endsWith('.js') ? 'text/javascript' : 'application/gzip');
+        res.setHeader('Content-Type', /\.m?js$/.test(url) ? 'text/javascript' : 'application/gzip');
         res.end(readFileSync(file));
       });
     },

@@ -1,6 +1,8 @@
-import { CalendarClock, Info } from 'lucide-react';
+import { CalendarClock, Info, ScanText } from 'lucide-react';
+import { useState } from 'react';
 import { motion } from 'motion/react';
 import { WEEKDAY_SHORT_PL } from '@nadgodziny/core';
+import { Button } from '../../components/ui/button';
 import { Callout } from '../../components/ui/callout';
 import { Card, CardBody, CardHeader } from '../../components/ui/card';
 import { CountUp } from '../../components/ui/count-up';
@@ -10,6 +12,7 @@ import { cn } from '../../lib/cn';
 import { fmt, fmt2 } from '../../lib/format';
 import { usePlanStore } from '../../state/plan-store';
 import { distribute, ROWS } from './groups';
+import { PlanImportDialog } from './plan-import/plan-import-dialog';
 import { V1Steps } from './v1-steps';
 
 function HourCell({
@@ -61,14 +64,26 @@ export function TimetableStep() {
   const { plan, settings, result } = useCalc();
   const { setTimetableCell, setTimetableRow } = usePlanStore();
   const totals = result.v1.hours;
+  const [importOpen, setImportOpen] = useState(false);
 
   return (
     <div className="grid gap-6">
+      <PlanImportDialog open={importOpen} onOpenChange={setImportOpen} />
       <Card initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <CardHeader
           icon={<CalendarClock className="size-5" />}
           title="Przydział godzin w tygodniu"
           description="Wpisz, ile godzin lekcyjnych masz w każdym dniu — osobno dla klas 1–2, 3–4 i 5. To samo zestawienie zasila oba warianty rozliczenia."
+          actions={
+            <Button
+              variant="outline"
+              onClick={() => setImportOpen(true)}
+              data-tour="plan-import"
+              data-testid="plan-import-open"
+            >
+              <ScanText className="size-4" /> Wczytaj z planu lekcji
+            </Button>
+          }
         />
         <CardBody>
           <div className="scroll-thin -mx-2 overflow-x-auto px-2 pb-1">
